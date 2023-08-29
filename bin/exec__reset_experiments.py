@@ -10,9 +10,9 @@ def reset_experiment():
     tensor_board_experiment_path = '/shared/ai_app/tensor_board_logs'
     checkpoint_path = '/shared/ai_app/snapshots'
 
-    exec_sh_on_head_node(f'rm -rf {tensor_board_experiment_path} 2>&1', pipe_output_to_print=True)
+    exec_sh_on_head_node(f'rm -rf {tensor_board_experiment_path} 2>&1', show_out=True)
 
-    exec_sh_on_head_node(f'rm -rf {checkpoint_path} 2>&1', pipe_output_to_print=True)
+    exec_sh_on_head_node(f'rm -rf {checkpoint_path} 2>&1', show_out=True)
 
     start_tensor_board()
 

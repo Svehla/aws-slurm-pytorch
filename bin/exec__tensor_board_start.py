@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-import subprocess
 from src.config import config
 from src.head_node_ssh_communication import exec_sh_on_head_node
 import time
 from src.timer import format_seconds_duration
 from exec__tensor_board_browser import open_browser_with_tensor_board
+from src.spawn_subprocess import spawn_subprocess
 
 # TODO: 
 # 1. remove tensorboard dependency + add removing prev output via cursor
@@ -40,7 +40,7 @@ def watch_server_log_file(path: str):
             print("\n".join(logOut))
             break
 
-        subprocess.run('clear')
+        spawn_subprocess('clear')
         print("\n".join(logOut))
 
 

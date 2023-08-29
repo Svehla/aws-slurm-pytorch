@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import sys
 import random
-
 from shared import create_prefixed_print, spawn_subprocess, debug_identify_instance
 print = create_prefixed_print('[head_sbatch]')
 
@@ -59,7 +58,7 @@ cmd = ' '.join([
     f'--gpus_per_node_count={GPUS_PER_NODE_COUNT}',
 ])
 
-out = spawn_subprocess(cmd, print=print, print_output=False)
+out = spawn_subprocess(cmd, show_out=False, print=print)
 
 # this print needs to be there because output is parsed by ./bin/exec__sbatch.py
 print(out)

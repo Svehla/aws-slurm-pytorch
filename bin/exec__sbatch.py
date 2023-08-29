@@ -17,7 +17,7 @@ def upload_source_code_into_head_node():
 
 def install_project_libraries():
     upload_source_code_into_head_node()
-    exec_sh_on_head_node(f"cd {config.HEAD_NODE_APP_SRC}; ./install_deps.py", pipe_output_to_print=True)
+    exec_sh_on_head_node(f"cd {config.HEAD_NODE_APP_SRC}; ./install_deps.py", show_out=True)
 
 # this is good but slow for development so I should hide it behind some cli param i guess
 # SHOULD_INSTALL_DEPS = True
@@ -32,7 +32,7 @@ def main_exec_slurm_job():
     if SHOULD_INSTALL_DEPS:
         install_project_libraries()
 
-    out = exec_sh_on_head_node(f"cd {config.HEAD_NODE_APP_SRC}; ./sbatch_exec.py", pipe_output_to_print=True)
+    out = exec_sh_on_head_node(f"cd {config.HEAD_NODE_APP_SRC}; ./sbatch_exec.py", show_out=True)
     last_line_of_output = out.splitlines()[-1]
     batch_id = int(last_line_of_output.split()[-1])
 

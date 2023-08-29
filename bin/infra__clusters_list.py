@@ -12,7 +12,9 @@ def list_clusters():
 
     output = spawn_subprocess(
         ' '.join(["pcluster", "list-clusters", '--region', config.REGION]),
-        show_debug=False
+        show_out=False,
+        show_time=False,
+        show_cmd=False
     )
     
     clusters_info = json.loads(output)

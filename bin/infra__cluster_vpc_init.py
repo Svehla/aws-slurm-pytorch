@@ -90,7 +90,7 @@ def create_vpc_with_user_interaction():
     Stack Name: parallelclusternetworking-pub-20230828155813 (id: arn:aws:cloudformation:eu-central-1:787214262457:stack/parallelclusternetworking-pub-20230828155813/d5cc21f0-45bb-11ee-8675-0a433a97f286)
     Status: Public - CREATE_IN_PROGRESS                                     
     """
-    # you need to interact with CLI
+    # you need to interact with CLI and then go back to my original process
     # TODO: uncomment
     subprocess.call([
         "pcluster", "configure", 

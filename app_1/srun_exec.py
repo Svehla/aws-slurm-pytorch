@@ -12,7 +12,7 @@ import sys
 sys.path.append('/shared/ai_app/source_code')
 sys.path.append('/shared/ai_app/source_code/src/download_multinode_dataset')
 
-from shared import create_prefixed_print, spawn_subprocess, stream_command_output
+from shared import create_prefixed_print, stream_command_output
 from src.download_multinode_dataset import download_dataset
 print = create_prefixed_print('[compute_srun]')
 

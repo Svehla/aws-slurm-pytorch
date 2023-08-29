@@ -78,7 +78,7 @@ def watch_job_logs(batch_id):
                     logOut.append(sinfo_desc)
                     logOut.append(sinfo)
 
-                is_job_ended = exec_sh_on_head_node(f"squeue -h -j {batch_id}", show_ssh_communication=False)
+                is_job_ended = exec_sh_on_head_node(f"squeue -h -j {batch_id}", show_ssh_communication=False, show_out=False)
 
                 if len(is_job_ended) == 0:
                     subprocess.run('clear')
