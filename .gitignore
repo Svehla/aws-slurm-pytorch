@@ -1,0 +1,13 @@
+**/__pycache__/**
+
+.DS_Store
+
+# secrets + infra state
+secrets
+
+__pycache__
+
+mnist_train
+
+# tensor board stuffs
+runs

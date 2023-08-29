@@ -1,0 +1,62 @@
+Region: {{REGION}}
+Image:
+  Os: ubuntu2004 
+
+# inspiration:
+# https://github.com/pytorch/examples/blob/main/distributed/ddp-tutorial-series/slurm/config.yaml.template
+# by default computeNode + headNode has shared home (~) directory so i do not need to mount shared file
+# when i use fsx with this conf, it charge me about 2$ per few hours... i should optimize it somehow
+SharedStorage:
+  - MountDir: /shared
+    Name: shared-fs
+    StorageType: FsxLustre
+    FsxLustreSettings:
+      StorageCapacity: 1200
+      DeploymentType: SCRATCH_1
+      StorageType: SSD
+
+# t2.micro is too small to install pytorch (it throws out of memory) 
+# TODO: make somehow bigger space of head node
+HeadNode:
+  InstanceType: c5.large
+  Networking:
+    SubnetId: {{SUBNET_ID}}
+  Ssh:
+    KeyName: {{SSH_HEAD_NODE_KEY_PAIR_NAME}}
+Scheduling:
+  Scheduler: slurm
+  SlurmQueues:
+  # TODO: add support for spot instance
+  - Name: pytorch-queue-1-gpu
+    ComputeResources:
+    - Name: my-small-gpu-node
+      Instances:
+      - InstanceType: g4dn.xlarge
+      MinCount: 0
+      MaxCount: 4
+    Networking:
+      SubnetIds:
+      - {{SUBNET_ID}}
+
+  - Name: pytorch-queue-2-gpu
+    ComputeResources:
+    - Name: my-2-gpu-node
+      Instances:
+      - InstanceType: g3.8xlarge
+      MinCount: 0
+      MaxCount: 4
+    Networking:
+      SubnetIds:
+      - {{SUBNET_ID}}
+
+  - Name: pytorch-queue-4-gpu
+    ComputeResources:
+    - Name: my-large-gpu-node
+      Instances:
+      - InstanceType: g4dn.12xlarge
+
+      MinCount: 0
+      MaxCount: 2
+    Networking:
+      SubnetIds:
+      - {{SUBNET_ID}}
