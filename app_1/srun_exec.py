@@ -38,7 +38,7 @@ torchrun_cmd = ' '.join([
     "--rdzv_backend", "c10d",
     "--rdzv_endpoint", f"{rdzv_node_ip}:29500",
     "./src/main_mnist_multinode.py",
-    "--total_epochs", "5",
+    "--total_epochs", "1",
     "--save_every", "5",
     "--experiment_name", args.experiment_name
 ])

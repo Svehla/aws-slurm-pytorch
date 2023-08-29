@@ -3,6 +3,7 @@ import subprocess
 from src.head_node_ssh_communication import exec_sh_on_head_node
 from src.config import config
 from src.timer import format_seconds_duration
+from src.colorize_shell import colorize_gray
 
 def get_batch_id_status(batch_id):
     output = exec_sh_on_head_node(f'squeue -j {str(batch_id)}', show_ssh_communication=False)
@@ -45,19 +46,17 @@ sinfo_desc = """
 - `&`: Power Up - Node currently powering up.
 """
 
-def watch_job_logs(batch_id):
-    start_time = time.time()
-
+def watch_job_logs(batch_id, start_time = time.time()):
     while True:
         elapsed_time = time.time() - start_time
-        time.sleep(3)
+        time.sleep(1)
         logOut = []
         try:
             b_status = get_batch_id_status(batch_id)
 
-            logOut.append(f"Elapsed time: {format_seconds_duration(elapsed_time)}")
-            logOut.append(f"Batch id    : {batch_id}")
-            logOut.append(f"Status      : {b_status} ({expand_slurm_status_code(b_status)})")
+            logOut.append(f"time     : {format_seconds_duration(elapsed_time)}")
+            logOut.append(f"Batch id : {batch_id}")
+            logOut.append(f"Status   : {b_status} ({expand_slurm_status_code(b_status)})")
 
             if b_status == 'CF': # or pending state???? not sure
                 logOut.append('~~~ waiting till all slurm nodes will be ready ~~~')
@@ -68,8 +67,9 @@ def watch_job_logs(batch_id):
                 out = ''
                 try:
                     out = exec_sh_on_head_node(f"cat {config.HEAD_NODE_APP_SRC}/../slurm_output/{batch_id}-slurm.out", show_ssh_communication=False)
-                    logOut.append(f'batch output:')
-                    logOut.append(f"====================================================")
+                    logOut.append("================= batch output =================")
+
+                    logOut = [colorize_gray(item) for item in logOut]
                     logOut.append('')
                     logOut.append(out)
                 except Exception as e:

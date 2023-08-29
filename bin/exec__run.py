@@ -4,6 +4,7 @@ from src.head_node_ssh_communication import exec_sh_on_head_node
 from src.rsync import rsync_to_head_node
 from src.timer import timer
 from src.watch_sbatch_logs import watch_job_logs
+import time
 
 # @timer
 def upload_source_code_into_head_node():
@@ -24,8 +25,7 @@ SHOULD_INSTALL_DEPS = False
 
 @timer
 def main_exec_slurm_job():
-    # TODO: should I setup source code path from the arg to have option to switch codebase + executors
-    # or just keep it for one training and do not crate platform for pcluster usage
+    start_time = time.time()
     upload_source_code_into_head_node()
 
     if SHOULD_INSTALL_DEPS:
@@ -35,8 +35,9 @@ def main_exec_slurm_job():
     last_line_of_output = out.splitlines()[-1]
     batch_id = int(last_line_of_output.split()[-1])
 
-    watch_job_logs(batch_id)
+    watch_job_logs(batch_id, start_time=start_time)
 
+# boilerplate setup of ssh+rsync+slurm overhead took ~10sec
 if __name__ == '__main__':
     main_exec_slurm_job()
 

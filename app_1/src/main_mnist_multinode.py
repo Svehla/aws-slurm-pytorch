@@ -1,13 +1,15 @@
+#!/usr/bin/env python3
+
 # TODO: run this file on single GPU/on local machine with mac chip
 # TODO: rewrite model into jupyter + unable export it into DDP
 # big inspiration taken from:
 # https://github.com/pytorch/examples/blob/main/distributed/ddp-tutorial-series/multinode.py
+
+# TODO: make this script available to run distributed and on local PC as well somehow
 import torch
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
-import torch.nn as nn
 import torch.nn.functional as F
-import torch.multiprocessing as mp
 from torch.utils.data.distributed import DistributedSampler
 from torch.nn.parallel import DistributedDataParallel as DDP
 from torch.distributed import init_process_group, destroy_process_group
@@ -18,6 +20,24 @@ from download_multinode_dataset import get_trainset
 import torch
 import numpy as np
 import random
+from model import ToyMnistModel
+
+# TODO: how to import shared
+# import sys
+# sys.path.append('/shared/ai_app/source_code/shared')
+# from ..shared import colorize_red
+
+
+def create_colorize_func(color_code: str):
+    def colorize(input_string: str) -> str:
+        return f"\033[{color_code}m{input_string}\033[0m"
+    return colorize
+
+colorize_red = create_colorize_func("91")
+# colorize_gray = create_colorize_func("90")
+# colorize_blue = create_colorize_func("94")
+# colorize_yellow = create_colorize_func("93")
+# colorize_green = create_colorize_func("92")
 
 # env parsing => TODO: add typed-env-parser ts alternative
 local_rank = int(os.environ["LOCAL_RANK"])
@@ -30,7 +50,12 @@ global_rank = int(os.environ["RANK"])
 # ------- identify logs -------
 # TODO: import ../shared code somehow 
 og_print = print
-print = lambda *args, **kwargs: og_print(f'[GR:{global_rank}LR:{local_rank}]', *args, **kwargs)
+print = lambda *args, **kwargs: og_print(
+    colorize_red(f'[GR:{global_rank}LR:{local_rank}]'),
+    # f"{colorize_red('[GR:')}{global_rank}{colorize_red('LR:')}{local_rank}]",
+    *args,
+    **kwargs
+)
 # ------------------------
 
 def set_seeds(seed):
@@ -95,6 +120,7 @@ class Trainer:
         self.local_rank = int(os.environ["LOCAL_RANK"])
         self.global_rank = int(os.environ["RANK"])
         if self.global_rank == 0 and self.local_rank == 0:
+            # TODO: extract paths to run it from different envs as well
             directory = "/shared/ai_app/snapshots"
             if not os.path.exists(directory):
                 os.makedirs(directory)
@@ -185,39 +211,6 @@ class Trainer:
                 self._save_snapshot(epoch)
 
 
-# model.py ------------------------- MNIST
-# TODO: make some better source code file system abstraction
-class ToyMnistModel(nn.Module):
-    """ Network architecture. """
-    def __init__(self):
-        super(ToyMnistModel, self).__init__()
-        self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-        self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-        self.conv2_drop = nn.Dropout2d()
-        self.fc1 = nn.Linear(320, 50)
-        self.fc2 = nn.Linear(50, 10)
-
-
-    # DDP connects into pytorch autograd_hook
-    # autograd_hooks are passes in forward function and waiting till backward is computed to distribute gradients over nodes
-    # remove: rewrite forward and when it's called it sends gradients to other nodes + aggregate results
-    def forward(self, x):
-        x = F.relu(F.max_pool2d(self.conv1(x), 2))
-        x = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(x)), 2))
-        x = x.view(-1, 320)
-        x = F.relu(self.fc1(x))
-        x = F.dropout(x, training=self.training)
-        x = self.fc2(x)
-        # print(x.shape)
-        # log softmax is applied into the last layer => not to the batches
-
-        # log_softmax === log(softmax)
-        # log_softmax + NLLLoss == CrossEntropyLoss => https://www.youtube.com/watch?v=6ArSys5qHAU&ab_channel=StatQuestwithJoshStarmer
-        # return F.log_softmax(x, dim=-1)
-        return x
-
-# ----------------------------------
-
 
 
 def load_train_objs():
@@ -262,6 +255,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     experiment_name = args.experiment_name
+    # TODO: extract paths to run it from different envs as well
     writer = SummaryWriter(f'/shared/ai_app/tensor_board_logs/{experiment_name}')
     snapshot_path = f"../snapshots/{experiment_name}.pt"
 

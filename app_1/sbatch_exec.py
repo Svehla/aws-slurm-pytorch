@@ -26,12 +26,11 @@ except KeyError:
     print("Invalid GPUS_PER_NODE_COUNT. It must be 1, 2, or 4.")
     sys.exit(1)
 
-print("-------------------------")
-print(f"EXPERIMENT_NAME: {EXPERIMENT_NAME}")
-print(f"NODES_COUNT: {NODES_COUNT}")
-print(f"GPUS_PER_NODE_COUNT: {GPUS_PER_NODE_COUNT}")
-print("-------------------------")
-
+# print("-------------------------")
+# print(f"EXPERIMENT_NAME: {EXPERIMENT_NAME}")
+# print(f"NODES_COUNT: {NODES_COUNT}")
+# print(f"GPUS_PER_NODE_COUNT: {GPUS_PER_NODE_COUNT}")
+# print("-------------------------")
 
 """
 1. sbatch allocates requested nodes for your job and initiates your script on one of

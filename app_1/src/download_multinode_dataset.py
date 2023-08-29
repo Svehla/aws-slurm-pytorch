@@ -10,11 +10,11 @@ def get_trainset(shouldDownload: bool):
     return trainset
 
 def download_dataset(print=print):
-    print('downloading multinode dataset into shared file system')
-    print('=====================================================')
+    # print('downloading multinode dataset into shared file system')
+    # print('=====================================================')
     trainset = get_trainset(True)
     print(f'dataset is downloaded and has {len(trainset)} items')
-    print()
+    # print()
 
 if __name__ == '__main__':
     download_dataset()
