@@ -15,7 +15,10 @@ colorize_green = create_colorize_func("92")
 og_print = print
 def create_prefixed_print(log_prefix: str):
     def new_print(*args, **kwargs):
-        og_print(colorize_green(log_prefix), *args, **kwargs, flush=True) # flush is necessary!
+        if log_prefix:
+            og_print(colorize_green(log_prefix), *args, **kwargs, flush=True) # flush is necessary!
+        else:
+            og_print(*args, **kwargs, flush=True) # flush is necessary!
 
     return new_print
 

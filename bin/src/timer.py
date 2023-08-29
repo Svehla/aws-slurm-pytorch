@@ -1,5 +1,6 @@
 import time
 from functools import wraps
+from src.colorize_shell import colorize_gray
 
 def timer(func):
     @wraps(func)
@@ -8,7 +9,8 @@ def timer(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"{func.__name__} executed in {format_seconds_duration(execution_time)}")
+        print(colorize_gray(f"function: '{func.__name__}' took: {format_seconds_duration(execution_time)}"))
+        print()
         return result
     return wrapper
 

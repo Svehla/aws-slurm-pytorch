@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 from src.config import config
 from src.head_node_ssh_communication import exec_sh_on_head_node
 from src.rsync import rsync_to_head_node

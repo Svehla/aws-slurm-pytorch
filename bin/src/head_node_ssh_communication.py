@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from src.config import config, infraState
-from src.spawn_subprocess import spawn_subprocess, colorize_yellow, colorize_blue, colorize_gray
+from src.spawn_subprocess import spawn_subprocess
+from src.colorize_shell import colorize_yellow, colorize_blue, colorize_gray
 
 # escaping magic commands of commands hell, but I like it
 def escape_quotes(s):

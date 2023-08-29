@@ -69,7 +69,7 @@ def watch_job_logs(batch_id):
                 try:
                     out = exec_sh_on_head_node(f"cat {config.HEAD_NODE_APP_SRC}/../slurm_output/{batch_id}-slurm.out", show_ssh_communication=False)
                     logOut.append(f'batch output:')
-                    logOut.append(f"=============")
+                    logOut.append(f"====================================================")
                     logOut.append('')
                     logOut.append(out)
                 except Exception as e:
