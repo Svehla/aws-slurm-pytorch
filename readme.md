@@ -16,7 +16,7 @@ This project automates the creation of an AWS ParallelCluster with one active ap
 ./infra__cluster_vpc_init.py
 # 2. create a new pcluster into the created VPC 
 ./infra__cluster_create.py
-# 3. spawn slurm sbatch /app_1 with basic ML script
+# 3. spawn slurm sbatch /app with basic ML script
 ./exec__run.py
 # 4.check progress via tensorboard
 ./infra__tensorboard_open_to_internet.py

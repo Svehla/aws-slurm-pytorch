@@ -69,6 +69,7 @@ while True:
             all_usage = run_cmd_on_compute_node(
                 node['node'], 
                 '&&'.join([
+                    'echo;'
                     'nvidia-smi',
                     'echo;'
                     'df -h',

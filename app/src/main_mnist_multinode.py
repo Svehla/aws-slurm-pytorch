@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# TODO: add multinode fine tuned llama
 # TODO: run this file on single GPU/on local machine with mac chip
 # TODO: rewrite model into jupyter + unable export it into DDP
 # big inspiration taken from:
@@ -22,41 +23,50 @@ import numpy as np
 import random
 from model import ToyMnistModel
 
-# TODO: how to import shared
+# ----------- env variables ------------
+
+# env parsing => TODO: add typed-env-parser ts alternative
+local_rank = int(os.environ["LOCAL_RANK"])
+global_rank = int(os.environ["RANK"])
+
+
+# ----------- setup logging ------------
+
+# TODO: how to import shared.py with colorized func?
 # import sys
 # sys.path.append('/shared/ai_app/source_code/shared')
 # from ..shared import colorize_red
-
+# i should run source /shared/ai_app/my-venv/bin/activate 
+# at the bagging before the script will start but it works for some reason... magic
 
 def create_colorize_func(color_code: str):
     def colorize(input_string: str) -> str:
         return f"\033[{color_code}m{input_string}\033[0m"
     return colorize
 
+colorize_blue = create_colorize_func("94")
 # colorize_red = create_colorize_func("91")
 # colorize_gray = create_colorize_func("90")
-colorize_blue = create_colorize_func("94")
 # colorize_yellow = create_colorize_func("93")
 # colorize_green = create_colorize_func("92")
 
-# env parsing => TODO: add typed-env-parser ts alternative
-local_rank = int(os.environ["LOCAL_RANK"])
-global_rank = int(os.environ["RANK"])
 
-# TODO: ?????
-# i should run source /shared/ai_app/my-venv/bin/activate 
-# at the bagging before the script will start but it works for some reason... magic
-
-# ------- identify logs -------
-# TODO: import ../shared code somehow 
 og_print = print
 print = lambda *args, **kwargs: og_print(
     colorize_blue(f'[GR:{global_rank}LR:{local_rank}]'),
-    # f"{colorize_red('[GR:')}{global_rank}{colorize_red('LR:')}{local_rank}]",
     *args,
     **kwargs
 )
-# ------------------------
+
+
+is_main_log_node = global_rank == 0 and local_rank == 0
+print('is_main_log_node', is_main_log_node)
+# TODO: add pytorch writer
+# writer = SummaryWriter(f'/shared/ai_app/tensor_board_logs/{experiment_name}')
+
+
+
+# ----------- setup seeds ------------
 
 def set_seeds(seed):
     torch.manual_seed(seed)
@@ -69,44 +79,12 @@ def set_seeds(seed):
 set_seeds(1234)
 
 # ----------- getting datasets ------------
-# TODO: add multinode fine tuned llama
+
 trainset = get_trainset(True)
 
 # -----------------------------------------
 
-# TODO: change experiment id somehow?
-# TODO: extract experiment ID into env variable
 
-def ddp_setup():
-    """
-    print(int(os.environ["LOCAL_RANK"]))
-    print(int(os.environ["RANK"]))
-    os.environ["CUDA_VISIBLE_DEVICES"] = os.environ["LOCAL_RANK"]
-    debug GPU availability
-
-    if not torch.cuda.is_available():
-        print('CUDA is not available.')
-    else:
-        print('-------------------------')
-        print('local rank ', int(os.environ["LOCAL_RANK"]))
-        print('rank ', int(os.environ["RANK"]))
-        # Get the number of GPUs available
-        num_gpus = torch.cuda.device_count()
-        print(f'Number of GPUs available: {num_gpus}')
-
-        # Print out GPU information
-        for i in range(num_gpus):
-            gpu_info = torch.cuda.get_device_properties(i)
-            print(f'GPU {i}:')
-            print(f'  Name: {gpu_info.name}')
-            print(f'  Total memory: {gpu_info.total_memory / 1024**2} MB')
-            print(f'  Multi-processor count: {gpu_info.multi_processor_count}')
-    """
-
-    init_process_group(backend="nccl")
-    torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
-
-# TODO: do I want to persist snapshots to s3??
 class Trainer:
     def __init__(
         self,
@@ -211,8 +189,6 @@ class Trainer:
                 self._save_snapshot(epoch)
 
 
-
-
 def load_train_objs():
     # train_set = MyTrainDataset(2048)  # load your dataset
     train_set = trainset # train_loader # 
@@ -233,6 +209,9 @@ def prepare_dataloader(dataset: Dataset, batch_size: int):
         sampler=DistributedSampler(dataset)
     )
 
+def ddp_setup():
+    init_process_group(backend="nccl")
+    torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
 
 def main(save_every: int, total_epochs: int, batch_size: int, snapshot_path: str):
     ddp_setup()
@@ -256,6 +235,7 @@ if __name__ == "__main__":
     
     experiment_name = args.experiment_name
     # TODO: extract paths to run it from different envs as well
+    # summary writer should be initialized only on the one node
     writer = SummaryWriter(f'/shared/ai_app/tensor_board_logs/{experiment_name}')
     snapshot_path = f"../snapshots/{experiment_name}.pt"
 

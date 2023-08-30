@@ -28,14 +28,14 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
     stderr_output = []
 
     for line in iter(process.stdout.readline, ''):
-        line_decoded = line.strip()
+        line_decoded = line.rstrip('\n')
         stdout_output.append(line_decoded)
         if show_out:
             print(colorize_blue(print_prefix), line_decoded, sep='')
 
 
     for line in iter(process.stderr.readline, ''):
-        line_decoded = line.strip()
+        line_decoded = line.rstrip('\n')
 
         # ------------------------------------------------------------
         # AAAAAARRRGHHHHHH Ignore the specific SSH warning message

@@ -17,7 +17,7 @@ class Config:
     # CURRENT_ACTIVE_APP=???
     HEAD_NODE_APP_SRC = "/shared/ai_app/source_code"
     HEAD_NODE_USER = "ubuntu"
-    CODEBASE_SOURCE_DIR = "./app_1/"
+    CODEBASE_SOURCE_DIR = "./app/"
 
 config = Config()
 
