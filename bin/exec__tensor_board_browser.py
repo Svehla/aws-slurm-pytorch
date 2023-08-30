@@ -1,12 +1,12 @@
 #!/usr/bin/env python
-import subprocess
 from src.config import infraState
+from src.spawn_subprocess import spawn_subprocess
     
 def open_browser_with_tensor_board(): 
-    subprocess.run([
+    spawn_subprocess(' '.join([
         'open',
         f"http://{infraState.ip}:6006"
-    ])
+    ]))
 
 
 if __name__ == '__main__':

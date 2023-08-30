@@ -33,9 +33,9 @@ def create_colorize_func(color_code: str):
         return f"\033[{color_code}m{input_string}\033[0m"
     return colorize
 
-colorize_red = create_colorize_func("91")
+# colorize_red = create_colorize_func("91")
 # colorize_gray = create_colorize_func("90")
-# colorize_blue = create_colorize_func("94")
+colorize_blue = create_colorize_func("94")
 # colorize_yellow = create_colorize_func("93")
 # colorize_green = create_colorize_func("92")
 
@@ -51,7 +51,7 @@ global_rank = int(os.environ["RANK"])
 # TODO: import ../shared code somehow 
 og_print = print
 print = lambda *args, **kwargs: og_print(
-    colorize_red(f'[GR:{global_rank}LR:{local_rank}]'),
+    colorize_blue(f'[GR:{global_rank}LR:{local_rank}]'),
     # f"{colorize_red('[GR:')}{global_rank}{colorize_red('LR:')}{local_rank}]",
     *args,
     **kwargs

@@ -5,6 +5,7 @@
     "cSpell.words": [
         "AAAAAARRRGHHHHHH",
         "accum",
+        "alloc",
         "awscli",
         "boto",
         "cpus",
@@ -21,6 +22,7 @@
         "isend",
         "logdir",
         "MNIST",
+        "mpstat",
         "multinode",
         "nccl",
         "nnodes",
@@ -45,6 +47,7 @@
         "slurm",
         "smth",
         "softmax",
+        "SOTA",
         "squeue",
         "srun",
         "templating",

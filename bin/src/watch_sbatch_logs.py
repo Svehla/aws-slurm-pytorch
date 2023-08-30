@@ -1,12 +1,12 @@
 import time
 import subprocess
-from src.head_node_ssh_communication import exec_sh_on_head_node
+from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from src.config import config
 from src.timer import format_seconds_duration
 from src.colorize_shell import colorize_gray
 
 def get_batch_id_status(batch_id):
-    output = exec_sh_on_head_node(f'squeue -j {str(batch_id)}', show_ssh_communication=False)
+    output = ssh_head_spawn_subprocess(f'squeue -j {str(batch_id)}', show_cmd=False, show_out=False)
 
     lines = output.strip().split('\n')
 
@@ -60,13 +60,13 @@ def watch_job_logs(batch_id, start_time = time.time()):
 
             if b_status == 'CF': # or pending state???? not sure
                 logOut.append('~~~ waiting till all slurm nodes will be ready ~~~')
-                sinfo = exec_sh_on_head_node("sinfo", show_ssh_communication=False)
+                sinfo = ssh_head_spawn_subprocess("sinfo", show_cmd=False, show_out=False)
                 logOut.append(sinfo_desc)
                 logOut.append(sinfo)
             else: 
                 out = ''
                 try:
-                    out = exec_sh_on_head_node(f"cat {config.HEAD_NODE_APP_SRC}/../slurm_output/{batch_id}-slurm.out", show_ssh_communication=False)
+                    out = ssh_head_spawn_subprocess(f"cat {config.HEAD_NODE_APP_SRC}/../slurm_output/{batch_id}-slurm.out", show_cmd=False, show_out=False)
                     logOut.append("================= batch output =================")
 
                     logOut = [colorize_gray(item) for item in logOut]
@@ -74,11 +74,11 @@ def watch_job_logs(batch_id, start_time = time.time()):
                     logOut.append(out)
                 except Exception as e:
                     logOut.append(f'slurm_output file for {batch_id} does not exist yet')
-                    sinfo = exec_sh_on_head_node("sinfo", show_ssh_communication=False)
+                    sinfo = ssh_head_spawn_subprocess("sinfo", show_cmd=False, show_out=False)
                     logOut.append(sinfo_desc)
                     logOut.append(sinfo)
 
-                is_job_ended = exec_sh_on_head_node(f"squeue -h -j {batch_id}", show_ssh_communication=False, show_out=False)
+                is_job_ended = ssh_head_spawn_subprocess(f"squeue -h -j {batch_id}", show_cmd=False, show_out=False)
 
                 if len(is_job_ended) == 0:
                     subprocess.run('clear')

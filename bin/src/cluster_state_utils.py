@@ -2,16 +2,15 @@ import subprocess
 from pathlib import Path
 import boto3 
 import json
+from src.spawn_subprocess import spawn_subprocess
 
 def fetch_aws_cluster_ip(region: str, cluster_name: str):
-    output = subprocess.check_output(
-        [
-            "pcluster", "describe-cluster",
-            "--cluster-name", cluster_name,
-            '--region', region
-        ],
-        text=True
-    )
+    # TODO: should I use boto3, or keep CLI as a main API?
+    output = spawn_subprocess(' '.join([
+        "pcluster", "describe-cluster",
+        "--cluster-name", cluster_name,
+        '--region', region
+    ]))
     cluster_info = json.loads(output)
     public_ip = cluster_info['headNode']['publicIpAddress']
     return public_ip

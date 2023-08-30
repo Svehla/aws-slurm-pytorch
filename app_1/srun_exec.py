@@ -21,6 +21,7 @@ print = create_prefixed_print('[compute_srun]')
 # so its a little HW waste but we do not want to run training preparation on the head node
 download_dataset(print=print)
 
+# TODO: replace with stream_command_output
 nodes = subprocess.check_output(f"scontrol show hostnames {os.getenv('SLURM_JOB_NODELIST')}", shell=True, text=True).split()
 rdzv_node = nodes[0]
 rdzv_node_ip = socket.gethostbyname(rdzv_node)
@@ -38,7 +39,7 @@ torchrun_cmd = ' '.join([
     "--rdzv_backend", "c10d",
     "--rdzv_endpoint", f"{rdzv_node_ip}:29500",
     "./src/main_mnist_multinode.py",
-    "--total_epochs", "1",
+    "--total_epochs", "10",
     "--save_every", "5",
     "--experiment_name", args.experiment_name
 ])

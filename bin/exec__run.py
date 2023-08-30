@@ -1,23 +1,19 @@
 #!/usr/bin/env python
 from src.config import config
-from src.head_node_ssh_communication import exec_sh_on_head_node
+from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
 from src.timer import timer
 from src.watch_sbatch_logs import watch_job_logs
 import time
 
-# @timer
 def upload_source_code_into_head_node():
     print(f"executing '{config.CODEBASE_SOURCE_DIR}' into parallel cluster")
-    exec_sh_on_head_node(f"mkdir -p {config.HEAD_NODE_APP_SRC}")
-    rsync_to_head_node(
-        source_dir=config.CODEBASE_SOURCE_DIR,
-        TARGET_DIR=config.HEAD_NODE_APP_SRC
-    )
+    ssh_head_spawn_subprocess(f"mkdir -p {config.HEAD_NODE_APP_SRC}", show_out=False)
+    rsync_to_head_node(source_dir=config.CODEBASE_SOURCE_DIR, TARGET_DIR=config.HEAD_NODE_APP_SRC)
 
 def install_project_libraries():
     upload_source_code_into_head_node()
-    exec_sh_on_head_node(f"cd {config.HEAD_NODE_APP_SRC}; ./install_deps.py", show_out=True)
+    ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./install_deps.py")
 
 # this is good but slow for development so I should hide it behind some cli param i guess
 # SHOULD_INSTALL_DEPS = True
@@ -31,7 +27,7 @@ def main_exec_slurm_job():
     if SHOULD_INSTALL_DEPS:
         install_project_libraries()
 
-    out = exec_sh_on_head_node(f"cd {config.HEAD_NODE_APP_SRC}; ./sbatch_exec.py", show_out=True)
+    out = ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./sbatch_exec.py")
     last_line_of_output = out.splitlines()[-1]
     batch_id = int(last_line_of_output.split()[-1])
 

@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 from src.config import config
-from src.head_node_ssh_communication import exec_sh_on_head_node
+from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
 from src.timer import timer
-from exec__sbatch import upload_source_code_into_head_node
-from exec__sbatch import install_project_libraries
+from exec__run import upload_source_code_into_head_node
+from exec__run import install_project_libraries
 
 # TODO: aws credentials are set because of s3 bucket service etc...
 # I should set AWS IAM rules instead of /.aws/credentials
 def setup_aws_credentials():
-    exec_sh_on_head_node('mkdir -p ~/.aws', show_out=True)
+    ssh_head_spawn_subprocess('mkdir -p ~/.aws')
     rsync_to_head_node('./secrets/credentials_head_node_aws', '~/.aws/credentials')
 
 # TODO: 
@@ -28,11 +28,7 @@ def install_head_node_venv():
     ]
 
     for cmd in cmds:
-        exec_sh_on_head_node(
-            cmd,
-            activate_sources=False,
-            show_out=True,
-        )
+        ssh_head_spawn_subprocess(cmd, activate_sources=False)
     
 
 # took ~6min

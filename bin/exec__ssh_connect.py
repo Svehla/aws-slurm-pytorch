@@ -4,6 +4,7 @@ import os
 from src.config import config
 
 def run_pcluster():
+    # exec vector path => execvp
     os.execvp("pcluster", [
         "pcluster", "ssh", 
         # add host automatically into ~/.ssh/known_hosts

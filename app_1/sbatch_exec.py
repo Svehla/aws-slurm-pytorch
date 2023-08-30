@@ -59,5 +59,5 @@ cmd = ' '.join([
 
 out = spawn_subprocess(cmd, show_out=False, print=print)
 
-# this print needs to be there because output is parsed by ./bin/exec__sbatch.py
+# this print needs to be there because output is parsed by ./bin/exec__run.py
 print(out)

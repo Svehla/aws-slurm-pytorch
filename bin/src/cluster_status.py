@@ -4,15 +4,21 @@ import subprocess
 from datetime import datetime
 from src.config import config
 from src.timer import format_seconds_duration
+from src.spawn_subprocess import spawn_subprocess
 
 def show_cluster_status_progress():
     start_time = time.time()
 
     while True:
         elapsed_time = time.time() - start_time
-        cluster_info = subprocess.check_output(
-            ["pcluster", "describe-cluster", "--cluster-name", config.CLUSTER_NAME, "--region", config.REGION], 
-            text=True
+        cluster_info = spawn_subprocess(' '.join([
+                "pcluster", "describe-cluster",
+                "--cluster-name", config.CLUSTER_NAME,
+                "--region", config.REGION
+            ]), 
+            show_out=False,
+            show_cmd=False,
+            show_time=False
         )
         cluster_info = json.loads(cluster_info)
 

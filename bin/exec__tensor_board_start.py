@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from src.config import config
-from src.head_node_ssh_communication import exec_sh_on_head_node
+from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 import time
 from src.timer import format_seconds_duration
 from exec__tensor_board_browser import open_browser_with_tensor_board
@@ -23,7 +23,7 @@ def watch_server_log_file(path: str):
 
             out = ''
             try:
-                out = exec_sh_on_head_node(f"cat {path}", show_ssh_communication=False)
+                out = ssh_head_spawn_subprocess(f"cat {path}", show_cmd=False, show_out=False)
             except Exception as e:
                 logOut.append(f'file on path: {path} does not exist')
 
@@ -47,10 +47,13 @@ def watch_server_log_file(path: str):
 
 def start_tensor_board():
     print("=== Be sure that you opened tensorboard into the internet ===")
-    exec_sh_on_head_node('rm /shared/ai_app/tensor_board_output.log 2>&1')
+    ssh_head_spawn_subprocess('rm /shared/ai_app/tensor_board_output.log 2>&1', show_out=False)
 
     # TODO: is smart to store logs into file into head node?
-    exec_sh_on_head_node('nohup tensorboard --logdir=/shared/ai_app/tensor_board_logs --bind_all > /shared/ai_app/tensor_board_output.log 2>&1 &',)
+    ssh_head_spawn_subprocess(
+        'nohup tensorboard --logdir=/shared/ai_app/tensor_board_logs --bind_all > /shared/ai_app/tensor_board_output.log 2>&1 &', 
+        show_out=False
+    )
 
     time.sleep(1)
     open_browser_with_tensor_board()

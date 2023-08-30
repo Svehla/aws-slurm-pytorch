@@ -1,5 +1,8 @@
 import subprocess
 
+# do a shared library for /app_{i} with reused code +
+# do a shared library for /app_{i}/source_code with reused code
+
 def create_colorize_func(color_code: str):
     def colorize(input_string: str) -> str:
         return f"\033[{color_code}m{input_string}\033[0m"

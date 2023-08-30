@@ -2,12 +2,11 @@
 from src.cluster_status import show_cluster_status_progress
 from src.config import config, infraState
 from infra__cluster_setup import setup_cluster_lib_dependencies
-from src.cluster_state_utils import get_cluster_ip 
 from src.timer import timer
 from src.spawn_subprocess import spawn_subprocess
 from pathlib import Path
 
-compiled_template_path = f'./__delete_me__temp__compiled_pcluster_config.yaml'
+compiled_template_path = f'./__temporary_readonly_compiled__pcluster_config.yaml'
 
 # recompiling template every time we call this script
 def compile_pcluster_config_template():
