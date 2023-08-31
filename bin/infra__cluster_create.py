@@ -11,7 +11,11 @@ def compile_pcluster_config_template():
     pcluster_template = Path('pcluster_config_template.yaml').read_text()
 
     return pcluster_template \
-        .replace('{{SSH_HEAD_NODE_KEY_PAIR_NAME}}', f"key_pair_{config.CLUSTER_NAME}") \
+        .replace(
+            '{{SSH_HEAD_NODE_KEY_PAIR_NAME}}',
+            # TODO: should i have shared key_pair across clusters? or generate shared one for all clusters
+            f"key_pair_{config.CLUSTER_NAME}"
+        ) \
         .replace('{{REGION}}', config.REGION) \
         .replace('{{SUBNET_ID}}', infraState.subnet_id)
 
@@ -48,7 +52,6 @@ def create_set_cluster():
         spawn_cluster_creation()
         print("start installing py dependencies")
         print("________________________________")
-        print("")
 
         # progress ended, so now I'am able to get IP address of the HeadNode cluster
         setup_cluster_lib_dependencies()

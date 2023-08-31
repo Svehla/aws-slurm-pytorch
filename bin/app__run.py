@@ -7,7 +7,6 @@ from src.watch_sbatch_logs import watch_job_logs
 import time
 
 def upload_source_code_into_head_node():
-    print(f"executing '{config.CODEBASE_SOURCE_DIR}' into parallel cluster")
     ssh_head_spawn_subprocess(f"mkdir -p {config.HEAD_NODE_APP_SRC}", show_out=False)
     rsync_to_head_node(source_dir=config.CODEBASE_SOURCE_DIR, TARGET_DIR=config.HEAD_NODE_APP_SRC)
 

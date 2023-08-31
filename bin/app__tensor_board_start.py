@@ -3,7 +3,7 @@ from src.config import config
 from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 import time
 from src.timer import format_seconds_duration
-from exec__tensor_board_browser import open_browser_with_tensor_board
+from app__tensor_board_browser import open_browser_with_tensor_board
 from src.spawn_subprocess import spawn_subprocess
 
 # TODO: 

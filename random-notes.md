@@ -36,7 +36,7 @@
     - do a module venv for request + other libs
     - what about pcluster template?
     => it's look to complex to do another level of abstraction here
-    - extract /app/shared + other reusable files for multi app spawning & developing
+    - extract /app_1/shared + other reusable files for multi app spawning & developing
 
 ## Future
 - create test web page that will spawn new node?

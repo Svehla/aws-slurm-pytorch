@@ -59,19 +59,23 @@ g3.8xlarge    - 2 NVIDIA GPU ($2.28/h)
 
 
 
-## /apps/{APP_ID} API
+## /bin to /apps/{APP_ID} communication protocol
 
-each app has a few files that works as an API to enable them spawn on the cluster
+each app has 2 files that works as an API to enable automating infrastructure with app implementation
 
-`install_deps.py`
+1. `install_deps.py` install deps inside of previously set venv
 
-`sbatch_exec.py`
+2. `./sbatch_exec.py` this file will be run => rename tu exec_run ????
 
+all needs to use venv right now
 
 ### Bottlenecks to TODO
-Every app needs to use venv, there is no change to switch into conda or docker
 
-TODO: unresolved cross bin/cluster/app dependencies:
-sourcing venv on ssh connection
+i hardcoded venv inside /bin in
+1. ssh interactive connection
+2. ssh non-interactive connection 
+3. cluster_setup venv installation
 
-if you want to have multi cluster of multi apps at the same time, you need to change user_cluster_config.py by every .sh run
+### 1 cluster 1 active app (out of N) dependant to venv
+by switching user_cluster_config.json['CURRENT_ACTIVE_APP_DIR'] you may develop 
+1 cluster -> N apps 

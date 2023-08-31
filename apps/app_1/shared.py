@@ -70,4 +70,4 @@ def debug_identify_instance(print=print):
 
     import requests
     response = requests.get('https://api.ipify.org?format=json')
-    print('ip: ', response.json()['ip'])
+    print('ip:', response.json()['ip'])

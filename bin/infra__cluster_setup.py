@@ -3,8 +3,8 @@ from src.config import config
 from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
 from src.timer import timer
-from exec__run import upload_source_code_into_head_node
-from exec__run import install_project_libraries
+from app__run import upload_source_code_into_head_node
+from app__run import install_project_libraries
 
 # TODO: aws credentials are set because of s3 bucket service etc...
 # I should set AWS IAM rules instead of /.aws/credentials

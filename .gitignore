@@ -13,7 +13,7 @@ runs
 snapshots
 tensor_board_logs
 
-app/temp
+apps/temp
 
 # cluster config
 /temp
