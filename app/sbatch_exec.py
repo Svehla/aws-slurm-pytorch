@@ -8,8 +8,7 @@ print = create_prefixed_print('[head_sbatch]')
 
 # --- setting up global config for training instance ---
 # if you want to change the config of your NN experiment this is definitely the place for you
-# 4 nodes has problem because AWS do not want to allocate the resources for me! slurm error squeue note: 
-# (Nodes required for job are DOWN, DRAINED or reserved for jobs in higher priority partitions)
+# 4 nodes of 2 gpus has problem because AWS was not able to allocate all resources and run sbatch
 NODES_COUNT = 1
 GPUS_PER_NODE_COUNT = 1
 EXPERIMENT_NAME = f"{random.randint(0, 10000)}-test_of_n{NODES_COUNT}-g{GPUS_PER_NODE_COUNT}"
@@ -25,12 +24,6 @@ try:
 except KeyError:
     print("Invalid GPUS_PER_NODE_COUNT. It must be 1, 2, or 4.")
     sys.exit(1)
-
-# print("-------------------------")
-# print(f"EXPERIMENT_NAME: {EXPERIMENT_NAME}")
-# print(f"NODES_COUNT: {NODES_COUNT}")
-# print(f"GPUS_PER_NODE_COUNT: {GPUS_PER_NODE_COUNT}")
-# print("-------------------------")
 
 """
 1. sbatch allocates requested nodes for your job and initiates your script on one of

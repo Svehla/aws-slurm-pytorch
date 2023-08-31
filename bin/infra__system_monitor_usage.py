@@ -7,10 +7,16 @@ from src.ssh_head_spawn_subprocess import escape_bash_quotes, ssh_head_spawn_sub
 
 # ------------------------ GPU section ------------------------
 
-# TODO: create AWS dashboard via aws cli? + install plugin for GPU & RAM
+# TODO: alternatives:
+
+# 1. create AWS dashboard via aws cli? + install plugin for GPU & RAM
 # https://aws.amazon.com/blogs/machine-learning/monitoring-gpu-utilization-with-amazon-cloudwatch/
 # sudo pip3 install nvidia-ml-py -y boto3
 # connect to all compute nodes and run nvidia-smi on them
+
+# 2. Pytorch profiler may analyze HW usage as well
+#  https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html
+
 print('system usage')
 
 def get_active_nodes():
@@ -68,7 +74,7 @@ while True:
 
             all_usage = run_cmd_on_compute_node(
                 node['node'], 
-                '&&'.join([
+                ' && '.join([
                     'echo;'
                     'nvidia-smi',
                     'echo;'

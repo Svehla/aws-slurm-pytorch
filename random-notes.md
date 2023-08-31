@@ -30,6 +30,13 @@
 - implement large LLM with pytorch RPC
 - create Trainer class for DDP/RPC/Local development
 - Add spot instances
+- change bin into cmd installable tool with one instance => my cluster with extracted config file
+    - before a do single cmd I need to figure out how to extract venv out of /bin/infra
+    - extract config.py out of module
+    - do a module venv for request + other libs
+    - what about pcluster template?
+    => it's look to complex to do another level of abstraction here
+    - extract /app/shared + other reusable files for multi app spawning & developing
 
 ## Future
 - create test web page that will spawn new node?

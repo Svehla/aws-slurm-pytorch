@@ -2,5 +2,6 @@ requests==2.31.0
 torch==2.0.1
 torchvision==0.15.2
 boto3==1.28.33
+# tensorboard is shared dependency between /bin cluster & /app
 tensorboard==2.14.0
 numpy==1.24.4

@@ -30,6 +30,7 @@ print = create_prefixed_print('') # if print is not defined, we need to keep flu
 
 # TODO: unify exec/spawn subprocesses somehow
 def stream_command_output(cmd, print=print):
+    print()
     print(colorize_gray(':~$ ') , colorize_yellow(cmd), sep='')
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 

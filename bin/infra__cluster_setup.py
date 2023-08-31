@@ -23,8 +23,9 @@ def install_head_node_venv():
     cmds = [
         'sudo DEBIAN_FRONTEND=noninteractive apt-get update -y',
         'sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv',
-        'python3 -m venv /shared/ai_app/my-venv/',
-        'echo "source /shared/ai_app/my-venv/bin/activate" >> ~/.bashrc',
+
+        # TODO: move it to be it as a part of /app, not a part of the cluster setup
+        f'python3 -m venv /shared/{config.APP_DIR}/my-venv/',
     ]
 
     for cmd in cmds:

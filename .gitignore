@@ -3,10 +3,18 @@ __pycache__
 
 .DS_Store
 
-# secrets + infra state
-secrets
 
 mnist_train
 
 # tensor board stuffs
 runs
+
+# my temp files
+snapshots
+tensor_board_logs
+
+app/temp
+
+# cluster config
+/temp
+secrets

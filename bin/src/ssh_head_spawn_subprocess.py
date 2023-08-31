@@ -9,7 +9,6 @@ def escape_bash_quotes(s):
     # it escapes single quotes. In bash, to insert a single quote into a single-quoted string, 
     #   we end the current string, insert an escaped single quote, and start a new string. 
     #   Hence, "'\\''" is used to insert a single quote.
- 
     s = s.replace("'", "'\\''")
     return s
 
@@ -24,7 +23,7 @@ def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_ou
     if activate_sources:
         make_slurm_commands_available = 'source /etc/profile'
         # TODO: should i change sources by config? or keep only one source working?
-        activate_venv = 'source /shared/ai_app/my-venv/bin/activate'
+        activate_venv = f'source /shared/{config.APP_DIR}/my-venv/bin/activate'
         init_command = f'{make_slurm_commands_available}; {activate_venv}; '
 
     sh_wrapped_command = ' '.join([

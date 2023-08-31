@@ -2,16 +2,14 @@
 from torchvision import datasets, transforms
 
 # TODO: download and prepare dataset from AWS s3 to use custom data
-def get_trainset(shouldDownload: bool):
+def get_trainset(path, shouldDownload: bool):
     mean = (0.5,)
     std_dev = (0.5,)
     transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std_dev)])
-    trainset = datasets.MNIST('/shared/ai_app/train_datasets/mnist', train=True, download=shouldDownload, transform=transform)
+    # TODO: add test set for over-fitting check
+    trainset = datasets.MNIST(path, train=True, download=shouldDownload, transform=transform)
     return trainset
 
-def download_dataset(print=print):
-    trainset = get_trainset(True)
+def download_dataset(path, print=print):
+    trainset = get_trainset(path=path, shouldDownload=True)
     print(f'dataset is downloaded and has {len(trainset)} items')
-
-if __name__ == '__main__':
-    download_dataset()

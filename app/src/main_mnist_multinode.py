@@ -23,20 +23,14 @@ import numpy as np
 import random
 from model import ToyMnistModel
 
-# ----------- env variables ------------
-
-# env parsing => TODO: add typed-env-parser ts alternative
-local_rank = int(os.environ["LOCAL_RANK"])
-global_rank = int(os.environ["RANK"])
-
 
 # ----------- setup logging ------------
 
 # TODO: how to import shared.py with colorized func?
 # import sys
-# sys.path.append('/shared/ai_app/source_code/shared')
+# sys.path.append('/shared/{APP}/source_code/shared')
 # from ..shared import colorize_red
-# i should run source /shared/ai_app/my-venv/bin/activate 
+# i should run source /shared/{APP}/my-venv/bin/activate 
 # at the bagging before the script will start but it works for some reason... magic
 
 def create_colorize_func(color_code: str):
@@ -58,13 +52,17 @@ print = lambda *args, **kwargs: og_print(
     **kwargs
 )
 
+# from torch.profiler import profile, record_function, ProfilerActivity
+# ----------- env variables ------------
 
-is_main_log_node = global_rank == 0 and local_rank == 0
-print('is_main_log_node', is_main_log_node)
+# env parsing => TODO: add typed-env-parser ts alternative
+local_rank = int(os.environ["LOCAL_RANK"])
+global_rank = int(os.environ["RANK"])
+IS_MAIN_NODE = global_rank == 0 and local_rank == 0
+
+print('is_main_log_node', IS_MAIN_NODE)
 # TODO: add pytorch writer
-# writer = SummaryWriter(f'/shared/ai_app/tensor_board_logs/{experiment_name}')
-
-
+# writer = SummaryWriter(f'/shared/{APP}/tensor_board_logs/{experiment_name}')
 
 # ----------- setup seeds ------------
 
@@ -78,12 +76,9 @@ def set_seeds(seed):
 
 set_seeds(1234)
 
-# ----------- getting datasets ------------
+device = torch.device(local_rank if torch.cuda.is_available() else torch.device('cpu'))
 
-trainset = get_trainset(True)
-
-# -----------------------------------------
-
+print(f'device: {device}')
 
 class Trainer:
     def __init__(
@@ -95,18 +90,13 @@ class Trainer:
         snapshot_path: str,
     ) -> None:
         
-        self.local_rank = int(os.environ["LOCAL_RANK"])
-        self.global_rank = int(os.environ["RANK"])
-        if self.global_rank == 0 and self.local_rank == 0:
-            # TODO: extract paths to run it from different envs as well
-            directory = "/shared/ai_app/snapshots"
-            if not os.path.exists(directory):
-                os.makedirs(directory)
+        # local_rank = int(os.environ["LOCAL_RANK"])
+        # global_rank = int(os.environ["RANK"])
 
         # TODO: is this .to() gpu assign correct?
-        self.model = model.to(self.local_rank)
+        self.model = model.to(device)
         is_model_cuda = next(self.model.parameters()).is_cuda
-        print(f'init trainer log: global_rank: {self.global_rank}, local_rank: {self.local_rank}, use cuda: {is_model_cuda}')
+        print(f'init trainer log: global_rank: {global_rank}, local_rank: {local_rank}, use cuda: {is_model_cuda}')
         self.train_data = train_data
         self.optimizer = optimizer
         self.save_every = save_every
@@ -117,10 +107,10 @@ class Trainer:
             self._load_snapshot(snapshot_path)
 
         # register backward hooks for sharing gradients across ranks
-        self.model = DDP(self.model, device_ids=[self.local_rank])
+        self.model = DDP(self.model, device_ids=[local_rank])
 
     def _load_snapshot(self, snapshot_path):
-        loc = f"cuda:{self.local_rank}"
+        loc = f"cuda:{local_rank}"
         snapshot = torch.load(snapshot_path, map_location=loc)
         self.model.load_state_dict(snapshot["MODEL_STATE"])
         self.epochs_run = snapshot["EPOCHS_RUN"] # this is last stored 
@@ -137,29 +127,47 @@ class Trainer:
         return loss
 
     def _run_epoch(self, epoch):
+        # pytorch profiler???
+        # with profile(
+        #     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
+        #     record_shapes=True,
+        #     profile_memory=True,
+        #     with_stack=True
+        # ) as prof:
+        #     with record_function("_run_batch"):
+        """
+        batch size should be computed by this:
+        Start with a small batch size, such as 1 or 2.
+        Increase the batch size until you encounter an Out of Memory (OOM) error.
+        Once you hit an OOM error, reduce the batch size by one or two units.
+        This value should be the maximum possible batch size that you can use without exhausting your GPU memory.
+        """
         b_sz = len(next(iter(self.train_data))[0])
         self.train_data.sampler.set_epoch(epoch)
         loss = None
         for source, targets in self.train_data:
-            source = source.to(self.local_rank)
-            targets = targets.to(self.local_rank)
+            source = source.to(device)
+            targets = targets.to(device)
             loss = self._run_batch(source, targets)
             loss = loss.item()
+
+            # prof.step()
 
         # should all processes have the same loss? if they share gradients via DDP?
         # avg_loss = sum(all_losses) / len(all_losses)
         # I think that this is working well, but dataset is shit => TODO: apply mnist 
         # print('batch loss', avg_loss, avg_loss + epoch)
 
-        print(f"[GPU{self.global_rank}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)} | Loss: {loss}")
+        print(f"[GPU{global_rank}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)} | Loss: {loss}")
         # write from 
         # this if is not working!!! why
         writer.add_scalar('Loss', loss, epoch)
-        if self.global_rank == 0 and self.local_rank == 0:
-            print(f"[GPU{self.global_rank}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)} | Loss: {loss}")
+        if global_rank == 0 and local_rank == 0:
+            print(f"[GPU{global_rank}] Epoch {epoch} | Batchsize: {b_sz} | Steps: {len(self.train_data)} | Loss: {loss}")
             print('tb add_scalar is not working', loss, epoch)
             
-            # print(self.global_rank, type(self.global_rank))
+            # print(global_rank, type(global_rank))
+
 
     def _save_snapshot(self, epoch):
         # if i Kil learning process and restore it from the state, tensorboard state will not be restored
@@ -184,8 +192,7 @@ class Trainer:
             self._run_epoch(epoch)
             is_end_of_save_every_cycle = (epoch % self.save_every == (self.save_every -1))
             # every node stores snapshot into shared file system => only one should do it !
-            # if self.local_rank == 0 and is_end_of_save_every_cycle:
-            if self.global_rank == 0 and self.local_rank == 0 and is_end_of_save_every_cycle:
+            if is_end_of_save_every_cycle and IS_MAIN_NODE:
                 self._save_snapshot(epoch)
 
 
@@ -210,7 +217,8 @@ def prepare_dataloader(dataset: Dataset, batch_size: int):
     )
 
 def ddp_setup():
-    init_process_group(backend="nccl")
+    init_process_group(backend="gloo")
+    # init_process_group(backend="nccl")
     torch.cuda.set_device(int(os.environ["LOCAL_RANK"]))
 
 def main(save_every: int, total_epochs: int, batch_size: int, snapshot_path: str):
@@ -220,24 +228,40 @@ def main(save_every: int, total_epochs: int, batch_size: int, snapshot_path: str
     trainer = Trainer(model, train_data, optimizer, save_every, snapshot_path)
     trainer.train(total_epochs)
     destroy_process_group()
-
+    writer.close()
 
 if __name__ == "__main__":
-
     import argparse
     parser = argparse.ArgumentParser(description='simple distributed training job')
     parser.add_argument('--total_epochs', type=int, help='Total epochs to train the model')
     parser.add_argument('--save_every', type=int, help='How often to save a snapshot')
     parser.add_argument('--batch_size', default=32, type=int, help='Input batch size on each device (default: 32)')
     parser.add_argument('--experiment_name', type=str, help='ID for Tensorboard + checkpoint file')
+    parser.add_argument('--dataset_path', type=str, help='')
+    parser.add_argument('--snapshots_dir', type=str, help='')
     # put writer into constructor of trainer, or keep it global?
     args = parser.parse_args()
     
     experiment_name = args.experiment_name
     # TODO: extract paths to run it from different envs as well
     # summary writer should be initialized only on the one node
-    writer = SummaryWriter(f'/shared/ai_app/tensor_board_logs/{experiment_name}')
-    snapshot_path = f"../snapshots/{experiment_name}.pt"
+    # use: f"{tempfile.gettempdir()}/{experiment_name}"
+
+
+    # ----------- getting datasets ------------
+
+    trainset = get_trainset(path=args.dataset_path, shouldDownload=False)
+
+    # -----------------------------------------
+
+    if IS_MAIN_NODE:
+        # TODO: extract paths to run it from different envs as well
+        if not os.path.exists(args.snapshots_dir):
+            os.makedirs(args.snapshots_dir)
+
+
+    writer = SummaryWriter(f'../tensor_board_logs/{args.experiment_name}')
+    snapshot_path = f"{args.snapshots_dir}/{args.experiment_name}.pt"
 
     main(args.save_every, args.total_epochs, args.batch_size, snapshot_path)
 

@@ -47,18 +47,18 @@ def watch_server_log_file(path: str):
 
 def start_tensor_board():
     print("=== Be sure that you opened tensorboard into the internet ===")
-    ssh_head_spawn_subprocess('rm /shared/ai_app/tensor_board_output.log 2>&1', show_out=False)
+    ssh_head_spawn_subprocess(f'rm /shared/{config.APP_DIR}/tensor_board_output.log 2>&1', show_out=False)
 
     # TODO: is smart to store logs into file into head node?
     ssh_head_spawn_subprocess(
-        'nohup tensorboard --logdir=/shared/ai_app/tensor_board_logs --bind_all > /shared/ai_app/tensor_board_output.log 2>&1 &', 
+        f'nohup tensorboard --logdir=/shared/{config.APP_DIR}/tensor_board_logs --bind_all > /shared/{config.APP_DIR}/tensor_board_output.log 2>&1 &', 
         show_out=False
     )
 
     time.sleep(1)
     open_browser_with_tensor_board()
 
-    watch_server_log_file('/shared/ai_app/tensor_board_output.log')
+    watch_server_log_file(f'/shared/{config.APP_DIR}/tensor_board_output.log')
     
 
 if __name__ == '__main__':

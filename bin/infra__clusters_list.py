@@ -22,6 +22,5 @@ def list_clusters():
     for index, cluster in enumerate(clusters_info['clusters']):
         ip_address = get_cluster_ip(config.REGION, cluster['clusterName'])
         print(f"{index + 1}) {cluster['clusterName']}, {cluster['clusterStatus']}, {cluster['scheduler']['type']}, IP: {ip_address}")
-        print("\n")
 
 list_clusters()

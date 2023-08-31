@@ -37,7 +37,14 @@ def fetch_aws_first_vpc_subnet(region, vpc_name):
 
 
 # TODO: put it into ./state/....json
-CACHE_FILE_PATH = './secrets/cluster_state_cache.json'
+TEMP_PATH = './temp'
+
+CACHE_FILE_PATH = f'{TEMP_PATH}/cluster_state_cache.json'
+
+def create_directory_if_not_exists(directory_path):
+    Path(directory_path).mkdir(parents=True, exist_ok=True)
+
+create_directory_if_not_exists(TEMP_PATH)
 
 # --------------- cached cluster state ---------------
 # TODO: refactor this to more abstract somehow => for example to rewrite it into terraform xd

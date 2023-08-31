@@ -7,8 +7,8 @@ from exec__tensor_board_start import start_tensor_board
 def reset_experiment(): 
     
     stop_tensor_board()
-    tensor_board_experiment_path = '/shared/ai_app/tensor_board_logs'
-    checkpoint_path = '/shared/ai_app/snapshots'
+    tensor_board_experiment_path = f'/shared/{config.APP_DIR}/tensor_board_logs'
+    checkpoint_path = f'/shared/{config.APP_DIR}/snapshots'
 
     ssh_head_spawn_subprocess(f'rm -rf {tensor_board_experiment_path} 2>&1')
 

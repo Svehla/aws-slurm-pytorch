@@ -58,3 +58,20 @@ g3.8xlarge    - 2 NVIDIA GPU ($2.28/h)
 ```
 
 
+
+## /apps/{APP_ID} API
+
+each app has a few files that works as an API to enable them spawn on the cluster
+
+`install_deps.py`
+
+`sbatch_exec.py`
+
+
+### Bottlenecks to TODO
+Every app needs to use venv, there is no change to switch into conda or docker
+
+TODO: unresolved cross bin/cluster/app dependencies:
+sourcing venv on ssh connection
+
+if you want to have multi cluster of multi apps at the same time, you need to change user_cluster_config.py by every .sh run

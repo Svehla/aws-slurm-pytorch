@@ -37,6 +37,7 @@
         "pcluster",
         "pravoai",
         "probs",
+        "rcfile",
         "rdzv",
         "relu",
         "salloc",
@@ -54,6 +55,7 @@
         "tensorboard",
         "torchvision",
         "trainset",
+        "venv",
         "xlarge"
     ]
 }

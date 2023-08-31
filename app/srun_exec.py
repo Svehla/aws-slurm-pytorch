@@ -9,8 +9,8 @@ import argparse
 
 # fix broken sbatch file system -> sbatch-ing this script has problem with local imports
 import sys
-sys.path.append('/shared/ai_app/source_code')
-sys.path.append('/shared/ai_app/source_code/src/download_multinode_dataset')
+sys.path.append('/shared/app/source_code')
+sys.path.append('/shared/app/source_code/src/download_multinode_dataset')
 
 from shared import create_prefixed_print, stream_command_output
 from src.download_multinode_dataset import download_dataset
@@ -19,7 +19,8 @@ print = create_prefixed_print('[compute_srun]')
 # downloading and preparing global shared node data before multinode training will start 
 # this script si run when all resources are allocated but only one computeNode is running
 # so its a little HW waste but we do not want to run training preparation on the head node
-download_dataset(print=print)
+dataset_path = '/shared/app/train_datasets/mnist'
+download_dataset(path=dataset_path, print=print)
 
 # TODO: replace with stream_command_output
 nodes = subprocess.check_output(f"scontrol show hostnames {os.getenv('SLURM_JOB_NODELIST')}", shell=True, text=True).split()
@@ -41,7 +42,9 @@ torchrun_cmd = ' '.join([
     "./src/main_mnist_multinode.py",
     "--total_epochs", "5",
     "--save_every", "5",
-    "--experiment_name", args.experiment_name
+    "--experiment_name", args.experiment_name,
+    "--dataset_path", dataset_path,
+    "--snapshots_dir", '../snapshots',
 ])
 
 stream_command_output(torchrun_cmd)
