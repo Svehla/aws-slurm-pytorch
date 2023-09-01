@@ -18,6 +18,7 @@
         "gloo",
         "hostnames",
         "Idletime",
+        "ipynb",
         "irecv",
         "isend",
         "logdir",

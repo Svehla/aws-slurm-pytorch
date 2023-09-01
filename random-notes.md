@@ -1,4 +1,3 @@
-
 # Random notes
 
 ## `TS` vs `PY` vs `terraform` for infrastructure code
@@ -34,11 +33,62 @@
     - before a do single cmd I need to figure out how to extract venv out of /bin/infra
     - extract config.py out of module
     - do a module venv for request + other libs
-    - what about pcluster template?
-    => it's look to complex to do another level of abstraction here
+    - what about pcluster template? => it's look to complex to do another level of abstraction here
     - extract /app_1/shared + other reusable files for multi app spawning & developing
 
 ## Future
 - create test web page that will spawn new node?
 
 
+### TODO:
+
+how to create file structure of app?
+
+
+=> random ideas:
+
+
+```sh
+# targets:
+# create reusable code for all apps:
+# > local development
+# > production inferring
+# > cluster (slurm) runner code
+#   > multi GPU training
+
+/apps
+    /{APP_ID}
+        /requirements.txt # shared across local dev + head node
+        /model # shared for local + slurm_node
+            /model.py
+            /dataset_preparation.py
+            /trainer.py # generic trainer with tensorboard atd..
+        /local_development
+            /index.ipynb
+            /localhost_trainer.py # ?
+            /install_deps.py
+        /slurm_node_infra # multi GPU
+            /sbatch_exec.py
+            /srun_exec.py
+            /multi_gpu_trainer.py
+            /install_deps.py
+            /multinode_dataset_preparation.py # ??? what?
+
+        /prepare_instance.py # install venv/conda/docker
+        /shared # shared for slurm infra, slurm trainer, local trainer
+            /shared_code # libs/whatever
+        
+        # prepare infrastructure with tensorboard somehow
+
+        # python imports sucks, what about to create
+
+# TODO: what about open jupyter on GPU with slurm node?
+```
+
+### questions to ai devs
+- how to do the file structure
+- is venv necessary?
+- pytorch/tensorboard profiler?
+- how to analyze performance?
+- how to compute scaling law no to to waste time with long training
+- prod vs non-prod environment code sharing

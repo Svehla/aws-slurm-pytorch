@@ -3,8 +3,12 @@ from src.config import config, infraState
 from src.spawn_subprocess import spawn_subprocess
 from src.colorize_shell import colorize_yellow, colorize_blue, colorize_gray
 
+# i may replace this with `shlex` library
 def escape_bash_quotes(s):
-    s = s.replace('\\', '\\\\')
+    s = s.replace('\\', '\\\\') # this needs to be the replace line of this fn
+
+    s = s.replace('`', '\\`')
+    s = s.replace('$', '\\$')
     s = s.replace('"', '\\"')
     # it escapes single quotes. In bash, to insert a single quote into a single-quoted string, 
     #   we end the current string, insert an escaped single quote, and start a new string. 

@@ -1,4 +1,4 @@
-# AWS slurm pytorch setup
+# AWS slurm pytorch JUMP HOST infrastructure tooling
 
 This project automates the creation of an AWS ParallelCluster with one active application, utilizing N nodes and M GPUs.
 
@@ -29,7 +29,7 @@ This project automates the creation of an AWS ParallelCluster with one active ap
 
 ## AWS GPU cost analysis
 
-```
+```sh
 ----------------------------------------
 AWS GPU options summary:
 https://docs.aws.amazon.com/dlami/latest/devguide/gpu.html
@@ -71,11 +71,22 @@ all needs to use venv right now
 
 ### Bottlenecks to TODO
 
-i hardcoded venv inside /bin in
+I hardcoded venv inside /bin in a few places:
 1. ssh interactive connection
 2. ssh non-interactive connection 
-3. cluster_setup venv installation
+3. cluster_setup venv installations
 
-### 1 cluster 1 active app (out of N) dependant to venv
-by switching user_cluster_config.json['CURRENT_ACTIVE_APP_DIR'] you may develop 
-1 cluster -> N apps 
+should the app decide which package manager it wants to use? 
+venv cons:
+- python specific (not needed for c++/c/js distributed apps)
+
+### N clusters with N apps
+
+`data/clusters/{cluster_namespace}/temp`
+
+`data/clusters/{cluster_namespace}/secrets`
+
+hen put data into .gitignore and change which cluster is active by changing user_cluster_config.json?
+
+which just setup which instance is available for interaction right now?
+

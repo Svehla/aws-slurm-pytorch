@@ -1,6 +1,18 @@
 #!/usr/bin/env python3
 import sys
 import random
+
+# shared should be put into the path and moved into ./apps/_shared_ to reuse some function across all apps
+# import should be possible by modifying os.path like 
+"""
+import sys
+import os
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.join(current_dir, '../shared'))
+
+from shared import create_prefixed_print, spawn_subprocess, debug_identify_instance
+"""
+# then the srun script should copy /apps/{APP_ID} + /apps/_shared_ into the head node
 from shared import create_prefixed_print, spawn_subprocess, debug_identify_instance
 print = create_prefixed_print('[head_sbatch]')
 
