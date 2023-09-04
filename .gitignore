@@ -13,8 +13,13 @@ runs
 snapshots
 tensor_board_logs
 
-apps/temp
+apps/*/tensor_board_logs
+apps/*/snapshots
+apps/*/temp
+apps/*/venv-app
 
 # cluster config
 /temp
 secrets
+
+.venv

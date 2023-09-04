@@ -22,8 +22,6 @@ app_dir = user_config['CURRENT_ACTIVE_APP_DIR']
 # this repo support 
 # 1 instance of cluster
 # N apps 
-#   > but only 1 may currently used 
-#   > each app needs to use venv because i automatically initialize it
 # Now we support only one app inside pcluster, but I could add support for more apps somehow
 # TODO: have 2 configs, one for cluster, one for app?
 class Config:
@@ -34,8 +32,10 @@ class Config:
 
     # --- 1 app instance config --- 
     APP_DIR = app_dir
-    HEAD_NODE_APP_SRC = f"/shared/{app_dir}/source_code"
-    CODEBASE_SOURCE_DIR = f"./apps/{app_dir}/"
+    LOCAL_APP = f"./apps/{app_dir}"
+    LOCAL_APP_SRC = f"./apps/{app_dir}/app"
+    HEAD_NODE_APP = f"/shared/{app_dir}"
+    HEAD_NODE_APP_SRC = f"/shared/{app_dir}/app"
     HEAD_NODE_USER = "ubuntu"
     KEY_PAIR_NAME = 'secret_key_pair'
 

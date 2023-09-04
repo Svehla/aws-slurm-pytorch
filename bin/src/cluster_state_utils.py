@@ -43,6 +43,7 @@ def fetch_aws_first_vpc_subnet(region, vpc_name):
 # TODO: put it into ./state/....json
 TEMP_PATH = './temp'
 
+# TODO: add support for multi cluster with {CLUSTER_NAME} prefix
 CACHE_FILE_PATH = f'{TEMP_PATH}/cluster_state_cache.json'
 
 def create_directory_if_not_exists(directory_path):

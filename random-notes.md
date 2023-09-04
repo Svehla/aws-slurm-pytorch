@@ -66,12 +66,12 @@ how to create file structure of app?
         /local_development
             /index.ipynb
             /localhost_trainer.py # ?
-            /install_deps.py
+            /prepare_app_env.py
         /slurm_node_infra # multi GPU
             /sbatch_exec.py
             /srun_exec.py
             /multi_gpu_trainer.py
-            /install_deps.py
+            /prepare_app_env.py
             /multinode_dataset_preparation.py # ??? what?
 
         /prepare_instance.py # install venv/conda/docker
@@ -87,7 +87,7 @@ how to create file structure of app?
 
 ### questions to ai devs
 - how to do the file structure
-- is venv necessary?
+- is ok to have venv necessary? => I don't think so because i want to support JS + cpp as well 
 - pytorch/tensorboard profiler?
 - how to analyze performance?
 - how to compute scaling law no to to waste time with long training

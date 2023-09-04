@@ -28,9 +28,9 @@ from model import ToyMnistModel
 
 # TODO: how to import shared.py with colorized func?
 # import sys
-# sys.path.append('/shared/{APP}/source_code/shared')
+# sys.path.append('/shared/{APP}/ml_model/shared')
 # from ..shared import colorize_red
-# i should run source /shared/{APP}/my-venv/bin/activate 
+# i should run source /shared/{APP}/venv-app/bin/activate 
 # at the bagging before the script will start but it works for some reason... magic
 
 def create_colorize_func(color_code: str):

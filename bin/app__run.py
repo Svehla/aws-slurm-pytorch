@@ -6,24 +6,24 @@ from src.timer import timer
 from src.watch_sbatch_logs import watch_job_logs
 import time
 
-def upload_source_code_into_head_node():
+def upload_ml_model_into_head_node():
     ssh_head_spawn_subprocess(f"mkdir -p {config.HEAD_NODE_APP_SRC}", show_out=False)
-    rsync_to_head_node(source_dir=config.CODEBASE_SOURCE_DIR, TARGET_DIR=config.HEAD_NODE_APP_SRC)
+    rsync_to_head_node(source_dir=config.LOCAL_APP_SRC, TARGET_DIR=config.HEAD_NODE_APP)
 
 def install_project_libraries():
-    upload_source_code_into_head_node()
-    ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./install_deps.py")
+    upload_ml_model_into_head_node()
+    ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./prepare_app_env.py")
 
 # this is good but slow for development so I should hide it behind some cli param i guess
-# SHOULD_INSTALL_DEPS = True
-SHOULD_INSTALL_DEPS = False
+# SHOULD_prepare_app_env = True
+SHOULD_prepare_app_env = False
 
 @timer
 def main_exec_slurm_job():
     start_time = time.time()
-    upload_source_code_into_head_node()
+    upload_ml_model_into_head_node()
 
-    if SHOULD_INSTALL_DEPS:
+    if SHOULD_prepare_app_env:
         install_project_libraries()
 
     out = ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./sbatch_exec.py")

@@ -1,7 +1,7 @@
 import subprocess
 
 # do a shared library for /app_{i} with reused code +
-# do a shared library for /app_{i}/source_code with reused code
+# do a shared library for /app_{i}/ml_model with reused code
 
 def create_colorize_func(color_code: str):
     def colorize(input_string: str) -> str:

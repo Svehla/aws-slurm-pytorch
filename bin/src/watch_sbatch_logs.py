@@ -67,7 +67,7 @@ def watch_job_logs(batch_id, start_time = time.time()):
                 out = ''
                 try:
                     # I should open ssh and stream file to the terminal like: `tail -f`
-                    out = ssh_head_spawn_subprocess(f"cat {config.HEAD_NODE_APP_SRC}/../slurm_output/{batch_id}-slurm.out", show_cmd=False, show_out=False)
+                    out = ssh_head_spawn_subprocess(f"cat {config.HEAD_NODE_APP}/slurm_output/{batch_id}-slurm.out", show_cmd=False, show_out=False)
                     logOut.append("================= batch output =================")
 
                     logOut = [colorize_gray(item) for item in logOut]

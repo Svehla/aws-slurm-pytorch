@@ -2,6 +2,7 @@
 from src.config import config, infraState
 from src.spawn_subprocess import spawn_subprocess
 from src.colorize_shell import colorize_yellow, colorize_blue, colorize_gray
+from src.before_connection import sh_before_connection
 
 # i may replace this with `shlex` library
 def escape_bash_quotes(s):
@@ -16,6 +17,10 @@ def escape_bash_quotes(s):
     s = s.replace("'", "'\\''")
     return s
 
+
+def filter_empty_items(original_list):
+    return [item for item in original_list if item]
+
 def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_out=True):
     init_command = ''
 
@@ -26,9 +31,8 @@ def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_ou
 
     if activate_sources:
         make_slurm_commands_available = 'source /etc/profile'
-        # TODO: should i change sources by config? or keep only one source working?
-        activate_venv = f'source /shared/{config.APP_DIR}/my-venv/bin/activate'
-        init_command = f'{make_slurm_commands_available}; {activate_venv}; '
+        # sh_before_connection
+        init_command = ';'.join(filter_empty_items([make_slurm_commands_available, sh_before_connection])) + ';'
 
     sh_wrapped_command = ' '.join([
         'ssh', 

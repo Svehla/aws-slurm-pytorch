@@ -13,7 +13,7 @@ sys.path.append(os.path.join(current_dir, '../shared'))
 from shared import create_prefixed_print, spawn_subprocess, debug_identify_instance
 """
 # then the srun script should copy /apps/{APP_ID} + /apps/_shared_ into the head node
-from shared import create_prefixed_print, spawn_subprocess, debug_identify_instance
+from ml_model.shared import create_prefixed_print, spawn_subprocess, debug_identify_instance
 print = create_prefixed_print('[head_sbatch]')
 
 # ----- we need to be sure that venv is set correctly -----
@@ -56,7 +56,7 @@ cmd = ' '.join([
     "--cpus-per-task=4",
     "--job-name=app-multinode-" + EXPERIMENT_NAME,
     "-o", "../slurm_output/%j-slurm.out",
-    "./srun_exec.py",
+    "./ml_model/srun_exec.py",
     f'--experiment_name={EXPERIMENT_NAME}',
     f'--nodes_count={NODES_COUNT}',
     f'--gpus_per_node_count={GPUS_PER_NODE_COUNT}',
