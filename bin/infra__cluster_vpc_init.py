@@ -102,7 +102,7 @@ def create_vpc_with_user_interaction():
 
  
 
-def init_aws_vpc_infrastructure():
+def infra__cluster_vpc_init():
     # 1.
     key_pair_name = create_key_pairs()
     print(f"Key pair : {key_pair_name} created")
@@ -112,4 +112,5 @@ def init_aws_vpc_infrastructure():
 
 
 
-init_aws_vpc_infrastructure()
+if __name__ == "__main__":
+    infra__cluster_vpc_init()

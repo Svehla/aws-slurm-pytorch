@@ -7,7 +7,7 @@ from src.spawn_subprocess import spawn_subprocess
 
 # took ~6-7-9min
 @timer
-def delete_cluster():
+def infra__cluster_delete():
     try: 
         invalidate_ip_cache()
         spawn_subprocess(' '.join([
@@ -25,4 +25,6 @@ def delete_cluster():
         print(f"An error occurred:")
         print(e)
 
-delete_cluster()
+
+if __name__ == "__main__":
+    infra__cluster_delete()

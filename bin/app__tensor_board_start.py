@@ -3,7 +3,7 @@ from src.config import config
 from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 import time
 from src.timer import format_seconds_duration
-from app__tensor_board_browser import open_browser_with_tensor_board
+from app__tensor_board_browser import app__tensor_board_browser
 from src.spawn_subprocess import spawn_subprocess
 
 # TODO: 
@@ -45,7 +45,7 @@ def watch_server_log_file(path: str):
 
 
 
-def start_tensor_board():
+def app__tensor_board_start():
     print("=== Be sure that you opened tensorboard into the internet ===")
     ssh_head_spawn_subprocess(f'rm /shared/{config.APP_DIR}/tensor_board_output.log 2>&1', show_out=False)
 
@@ -56,12 +56,12 @@ def start_tensor_board():
     )
 
     time.sleep(1)
-    open_browser_with_tensor_board()
+    app__tensor_board_browser()
 
     watch_server_log_file(f'/shared/{config.APP_DIR}/tensor_board_output.log')
     
 
 if __name__ == '__main__':
-    start_tensor_board()
+    app__tensor_board_start()
 
 

@@ -35,14 +35,13 @@
     - do a module venv for request + other libs
     - what about pcluster template? => it's look to complex to do another level of abstraction here
     - extract /app_1/shared + other reusable files for multi app spawning & developing
+- create executable CLI command out of bin
 
 ## Future
 - create test web page that will spawn new node?
 
-
 ### TODO:
-
-how to create file structure of app?
+how to create file structure of app? => do unify wrapper and then each app should be custom similar to custom git repo 
 
 
 => random ideas:
@@ -84,11 +83,3 @@ how to create file structure of app?
 
 # TODO: what about open jupyter on GPU with slurm node?
 ```
-
-### questions to ai devs
-- how to do the file structure
-- is ok to have venv necessary? => I don't think so because i want to support JS + cpp as well 
-- pytorch/tensorboard profiler?
-- how to analyze performance?
-- how to compute scaling law no to to waste time with long training
-- prod vs non-prod environment code sharing

@@ -17,7 +17,6 @@ from src.ssh_head_spawn_subprocess import escape_bash_quotes, ssh_head_spawn_sub
 # 2. Pytorch profiler may analyze HW usage as well
 #  https://pytorch.org/tutorials/recipes/recipes/profiler_recipe.html
 
-print('system usage')
 
 def get_active_nodes():
     currently_active = ssh_head_spawn_subprocess(' '.join([
@@ -51,63 +50,67 @@ def run_cmd_on_compute_node(node_id: str, cmd):
         show_cmd=False
     )
 
-start_time = time.time()
-while True:
-    time.sleep(3)
+def infra__system_monitor_usage():
+    start_time = time.time()
+    while True:
+        time.sleep(3)
 
-    elapsed_time = time.time() - start_time
-    logOut = []
+        elapsed_time = time.time() - start_time
+        logOut = []
 
-    active_nodes = get_active_nodes()
+        active_nodes = get_active_nodes()
 
-    logOut.append(f'elapsed {format_seconds_duration(elapsed_time)}')
+        logOut.append(f'elapsed {format_seconds_duration(elapsed_time)}')
 
-    if len(active_nodes) == 0:
-        logOut.append(f'no active nodes right now')
+        if len(active_nodes) == 0:
+            logOut.append(f'no active nodes right now')
 
-    # TODO: do those ssh in parallel via sub processes
-    # one sync iteration for 1 node took ~11sec, without ssh overhead it took ~6sec
-    for node in active_nodes:
-        try:
-            logOut.append('')
-            logOut.append(f'-----{node["node"]}-----')
+        # TODO: do those ssh in parallel via sub processes
+        # one sync iteration for 1 node took ~11sec, without ssh overhead it took ~6sec
+        for node in active_nodes:
+            try:
+                logOut.append('')
+                logOut.append(f'-----{node["node"]}-----')
 
-            all_usage = run_cmd_on_compute_node(
-                node['node'], 
-                ' && '.join([
-                    'echo;'
-                    'nvidia-smi',
-                    'echo;'
-                    'df -h',
-                    'echo;'
-                    'free -h',
-                    'echo;'
-                    'top -b -n 1 | grep "Cpu(s)"'
-                ])
-            )
-            logOut.append(all_usage)
-            logOut.append('')
+                all_usage = run_cmd_on_compute_node(
+                    node['node'], 
+                    ' && '.join([
+                        'echo;'
+                        'nvidia-smi',
+                        'echo;'
+                        'df -h',
+                        'echo;'
+                        'free -h',
+                        'echo;'
+                        'top -b -n 1 | grep "Cpu(s)"'
+                    ])
+                )
+                logOut.append(all_usage)
+                logOut.append('')
 
-            # TODO: do those ssh in parallel via sub processes
-            """
-            disk_usage = run_cmd_on_compute_node(node['node'], 'nvidia-smi')
-            disk_usage = run_cmd_on_compute_node(node['node'], 'df -h')
-            ram_usage = run_cmd_on_compute_node(node['node'], 'free -h')
-            cpu_usage = run_cmd_on_compute_node(node['node'], 'top -b -n 1 | grep "Cpu(s)"')
-            logOut.append(gpu_usage)
-            logOut.append('')
-            logOut.append(cpu_usage)
-            logOut.append('')
-            logOut.append(disk_usage)
-            logOut.append('')
-            logOut.append(ram_usage)
-            """
-        except Exception as e:
-            logOut.append(f"some err occurred: {e}")
-
-
-    subprocess.run('clear')
-    print("\n".join(logOut))
+                # TODO: do those ssh in parallel via sub processes
+                """
+                disk_usage = run_cmd_on_compute_node(node['node'], 'nvidia-smi')
+                disk_usage = run_cmd_on_compute_node(node['node'], 'df -h')
+                ram_usage = run_cmd_on_compute_node(node['node'], 'free -h')
+                cpu_usage = run_cmd_on_compute_node(node['node'], 'top -b -n 1 | grep "Cpu(s)"')
+                logOut.append(gpu_usage)
+                logOut.append('')
+                logOut.append(cpu_usage)
+                logOut.append('')
+                logOut.append(disk_usage)
+                logOut.append('')
+                logOut.append(ram_usage)
+                """
+            except Exception as e:
+                logOut.append(f"some err occurred: {e}")
 
 
+        subprocess.run('clear')
+        print("\n".join(logOut))
 
+
+
+
+if __name__ == "__main__":
+    infra__system_monitor_usage()

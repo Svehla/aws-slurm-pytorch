@@ -14,7 +14,7 @@ def read_file(file_path):
     else:
         return None
 
-def run_pcluster():
+def app__ssh_connect():
     commands_to_run_before_user_start_interacting = escape_bash_quotes('; '.join([
         'source /etc/profile',
         'source ~/.bashrc',
@@ -37,4 +37,6 @@ def run_pcluster():
 
     os.execvp("pcluster", argv)
 
-run_pcluster()
+
+if __name__ == '__main__':
+    app__ssh_connect()

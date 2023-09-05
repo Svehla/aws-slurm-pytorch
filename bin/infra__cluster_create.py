@@ -47,7 +47,7 @@ def spawn_cluster_creation():
 
 # took ~18-21min
 @timer
-def create_set_cluster():
+def infra__cluster_create():
     try:
         spawn_cluster_creation()
         print("start installing py dependencies")
@@ -59,4 +59,5 @@ def create_set_cluster():
         print(f"An error occurred:")
         print(e)
 
-create_set_cluster()
+if __name__ == "__main__":
+    infra__cluster_create()

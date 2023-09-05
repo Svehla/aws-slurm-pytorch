@@ -1,3 +1,4 @@
+
 # AWS slurm pytorch JUMP HOST infrastructure tooling
 
 This project automates the creation of an AWS ParallelCluster with one active application, utilizing N nodes and M GPUs.
@@ -7,6 +8,21 @@ This project automates the creation of an AWS ParallelCluster with one active ap
 - pip
 - awscli
 - aws-parallelcluster
+
+## Installations
+
+```sh
+
+pip install -r ./bin/requirements.txt
+activate-global-python-argcomplete
+echo "... ..." >> touch user_cluster_config.json 
+
+# artificial software development
+alias asd=~/Desktop/pytorch_parallel_training/bin/index.py
+
+```
+
+
 
 ## Steps to setup cluster
 

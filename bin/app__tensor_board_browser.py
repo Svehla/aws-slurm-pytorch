@@ -2,7 +2,7 @@
 from src.config import infraState
 from src.spawn_subprocess import spawn_subprocess
     
-def open_browser_with_tensor_board(): 
+def app__tensor_board_browser(): 
     spawn_subprocess(' '.join([
         'open',
         f"http://{infraState.ip}:6006"
@@ -10,4 +10,4 @@ def open_browser_with_tensor_board():
 
 
 if __name__ == '__main__':
-    open_browser_with_tensor_board()
+    app__tensor_board_browser()

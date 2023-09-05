@@ -19,7 +19,7 @@ def install_project_libraries():
 SHOULD_prepare_app_env = False
 
 @timer
-def main_exec_slurm_job():
+def app__run():
     start_time = time.time()
     upload_ml_model_into_head_node()
 
@@ -34,7 +34,7 @@ def main_exec_slurm_job():
 
 # boilerplate setup of ssh+rsync+slurm overhead took ~10sec
 if __name__ == '__main__':
-    main_exec_slurm_job()
+    app__run()
 
     # TODO: how to run `scancel {BATCH_ID}`? => should i automate it somehow?
     # 1. cmd+c => interruption signal 

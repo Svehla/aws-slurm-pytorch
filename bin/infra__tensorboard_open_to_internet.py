@@ -15,7 +15,7 @@ def check_url_availability(url):
 
 # to check security groups in the UI go to:
 # https://eu-central-1.console.aws.amazon.com/ec2/home?region=eu-central-1#Home
-def open_tensorboard_to_internet():
+def infra__tensorboard_open_to_internet():
     is_available = check_url_availability(f"http://{infraState.ip}:6006")
 
     if is_available:
@@ -44,9 +44,5 @@ def open_tensorboard_to_internet():
 
 
 if __name__ == "__main__":
-    open_tensorboard_to_internet()
-
-    pass
-
-
+    infra__tensorboard_open_to_internet()
 

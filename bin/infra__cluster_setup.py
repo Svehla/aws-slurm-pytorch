@@ -34,5 +34,8 @@ def setup_cluster_lib_dependencies():
     setup_aws_credentials()
     print('--- script successfully ended ---')
 
-if __name__ == "__main__":
+def infra__cluster_setup():
     setup_cluster_lib_dependencies()
+
+if __name__ == "__main__":
+    infra__cluster_setup()

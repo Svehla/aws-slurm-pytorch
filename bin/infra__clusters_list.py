@@ -6,7 +6,7 @@ from src.timer import timer
 from src.spawn_subprocess import spawn_subprocess
 
 @timer
-def list_clusters():
+def infra__clusters_list():
 
     print(f"available clusters for {config.REGION}:")
 
@@ -23,4 +23,5 @@ def list_clusters():
         ip_address = get_cluster_ip(config.REGION, cluster['clusterName'])
         print(f"{index + 1}) {cluster['clusterName']}, {cluster['clusterStatus']}, {cluster['scheduler']['type']}, IP: {ip_address}")
 
-list_clusters()
+if __name__ == "__main__":
+    infra__clusters_list()
