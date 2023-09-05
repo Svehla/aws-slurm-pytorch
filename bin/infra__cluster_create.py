@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.cluster_status import show_cluster_status_progress
 from src.config import config, infraState
 from infra__cluster_setup import setup_cluster_lib_dependencies

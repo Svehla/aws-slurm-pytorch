@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from torchvision import datasets, transforms
 
 # TODO: download and prepare dataset from AWS s3 to use custom data

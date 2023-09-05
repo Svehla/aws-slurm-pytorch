@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # TODO: rewrite this script into terraform + add option to delete all resources
 # all of this can be done via aws parallel cluster CLI but its opaque and badly automated so the Terraform is the way

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.cluster_status import show_cluster_status_progress
 
 def infra__cluster_status():

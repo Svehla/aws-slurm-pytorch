@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.config import config
 from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
@@ -11,20 +11,23 @@ def upload_ml_model_into_head_node():
     rsync_to_head_node(source_dir=config.LOCAL_APP_SRC, TARGET_DIR=config.HEAD_NODE_APP)
 
 def install_project_libraries():
+    # TODO: spawn installation on compute node via sbatch and store packages on /shared fs
     upload_ml_model_into_head_node()
     ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./prepare_app_env.py")
 
 # this is good but slow for development so I should hide it behind some cli param i guess
 # SHOULD_prepare_app_env = True
-SHOULD_prepare_app_env = False
+SHOULD_prepare_app_env = True
 
 @timer
 def app__run():
     start_time = time.time()
     upload_ml_model_into_head_node()
 
+    # print('aaa')
     if SHOULD_prepare_app_env:
         install_project_libraries()
+    # print('bbb')
 
     out = ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./sbatch_exec.py")
     last_line_of_output = out.splitlines()[-1]

@@ -23,8 +23,6 @@ def check_folder_exists(folder_path):
 if check_folder_exists('../venv') == False:
     stream_command_output(f'python3 -m venv ../venv-app/', print=print) 
 
-os.system('')
-
 stream_command_output(' && '.join([
     # there should not be `source {path}` cmd here
     '. ../venv-app/bin/activate',

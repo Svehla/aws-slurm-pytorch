@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.config import infraState
 from src.spawn_subprocess import spawn_subprocess
     

@@ -1,11 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+
 
 import os
 from src.config import config
 from src.ssh_head_spawn_subprocess import escape_bash_quotes
 from pathlib import Path
 from src.before_connection import sh_before_connection
-
+from src.array import filter_empty_items
 
 def read_file(file_path):
     file_path = Path(file_path)
@@ -14,13 +15,14 @@ def read_file(file_path):
     else:
         return None
 
+
 def app__ssh_connect():
-    commands_to_run_before_user_start_interacting = escape_bash_quotes('; '.join([
+    commands_to_run_before_user_start_interacting = escape_bash_quotes('; '.join(filter_empty_items([
         'source /etc/profile',
         'source ~/.bashrc',
         sh_before_connection,
         f'cd /shared/{config.APP_DIR}',
-    ]))
+    ])))
 
     # exec vector path => execvp
     argv = [

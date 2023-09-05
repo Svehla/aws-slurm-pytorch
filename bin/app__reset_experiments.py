@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.config import config
 from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from app__tensor_board_stop import stop_tensor_board

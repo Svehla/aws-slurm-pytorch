@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.config import config, infraState
 from src.timer import format_seconds_duration
 from src.spawn_subprocess import spawn_subprocess

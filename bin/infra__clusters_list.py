@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import json
 from src.config import config
 from src.cluster_state_utils import get_cluster_ip 

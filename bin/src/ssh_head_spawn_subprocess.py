@@ -1,8 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.config import config, infraState
 from src.spawn_subprocess import spawn_subprocess
 from src.colorize_shell import colorize_yellow, colorize_blue, colorize_gray
 from src.before_connection import sh_before_connection
+from src.array import filter_empty_items
 
 # i may replace this with `shlex` library
 def escape_bash_quotes(s):
@@ -18,8 +19,7 @@ def escape_bash_quotes(s):
     return s
 
 
-def filter_empty_items(original_list):
-    return [item for item in original_list if item]
+
 
 def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_out=True):
     init_command = ''

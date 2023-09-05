@@ -1,15 +1,15 @@
 from src.cluster_state_utils import get_cluster_ip, get_subnet_id
-import json
+from json5 import loads
 from pathlib import Path
 from src.json_validate import json_validate
 
 
 # TODO: should be path to the config part of arg?
 # Define the path to the file
-file_path = Path('./user_cluster_config.json')
+file_path = Path('./user_cluster_config.jsonc')
 
 # Read the file and load JSON data from it
-user_config = json.loads(file_path.read_text())
+user_config = loads(file_path.read_text())
 
 json_validate(
     user_config,

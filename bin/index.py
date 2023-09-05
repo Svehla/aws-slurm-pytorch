@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # PYTHON_ARGCOMPLETE_OK
 
 import argparse
@@ -16,7 +16,7 @@ from infra__system_monitor_usage import infra__system_monitor_usage
 from infra__tensorboard_open_to_internet import infra__tensorboard_open_to_internet
 
 # ---
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # above line is needed to be able to run the script as ./my-python.py
 
 import argparse

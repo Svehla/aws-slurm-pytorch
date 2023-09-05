@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from src.cluster_status import show_cluster_status_progress
 from src.cluster_state_utils import invalidate_ip_cache
 from src.config import config
