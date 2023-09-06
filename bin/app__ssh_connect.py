@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-
-
 import os
 from src.config import config
 from src.ssh_head_spawn_subprocess import escape_bash_quotes
@@ -15,13 +13,15 @@ def read_file(file_path):
     else:
         return None
 
+def app__ssh_connect(extra_command_to_run = None):
+    make_slurm_commands_available = 'source /etc/profile'
 
-def app__ssh_connect():
     commands_to_run_before_user_start_interacting = escape_bash_quotes('; '.join(filter_empty_items([
-        'source /etc/profile',
+        make_slurm_commands_available,
         'source ~/.bashrc',
         sh_before_connection,
         f'cd /shared/{config.APP_DIR}',
+        extra_command_to_run,
     ])))
 
     # exec vector path => execvp
@@ -32,10 +32,14 @@ def app__ssh_connect():
         "-i", 
         config.PEM_PATH,
         "-t",
-        # chatGPT magic :pray: god bless open.ai
-        f'bash --rcfile <(echo "{commands_to_run_before_user_start_interacting}")'
+        # chatGPT magic :pray: god bless open.ai => bash -i is not working i guess
+        f""" bash -c "{commands_to_run_before_user_start_interacting}; bash -i" """
+        # f'bash --rcfile <(echo "{commands_to_run_before_user_start_interacting}")'
     ]
 
+    print('')
+    print(' '.join(argv))
+    print('')
 
     os.execvp("pcluster", argv)
 

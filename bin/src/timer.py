@@ -1,6 +1,6 @@
 import time
 from functools import wraps
-from src.colorize_shell import colorize_gray
+from src.magic_shells import colorize_gray
 
 def timer(func):
     @wraps(func)

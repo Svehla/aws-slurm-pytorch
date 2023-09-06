@@ -6,14 +6,25 @@ Image:
 # https://github.com/pytorch/examples/blob/main/distributed/ddp-tutorial-series/slurm/config.yaml.template
 # by default computeNode + headNode has shared home (~) directory so i do not need to mount shared file
 # when i use fsx with this conf, it charge me about 2$ per few hours... i should optimize it somehow
+
+# Too expensive!!!
+# SharedStorage:
+#   - MountDir: /shared
+#     Name: shared-fs
+#     StorageType: FsxLustre
+#     FsxLustreSettings:
+#       StorageCapacity: 1200
+#       DeploymentType: SCRATCH_1
+#       StorageType: SSD
+
+# TODO: use EBS instead
 SharedStorage:
   - MountDir: /shared
-    Name: shared-fs
-    StorageType: FsxLustre
-    FsxLustreSettings:
-      StorageCapacity: 1200
-      DeploymentType: SCRATCH_1
-      StorageType: SSD
+    Name: shared-ebs
+    StorageType: Ebs
+    EbsSettings:
+      VolumeType: gp2
+      VolumeSize: 200
 
 # t2.micro is too small to install pytorch (it throws out of memory) 
 # TODO: make somehow bigger space of head node

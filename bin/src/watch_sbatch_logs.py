@@ -3,7 +3,7 @@ import subprocess
 from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
 from src.config import config
 from src.timer import format_seconds_duration
-from src.colorize_shell import colorize_gray
+from src.magic_shells import colorize_gray, clear_last_lines
 
 def get_batch_id_status(batch_id):
     output = ssh_head_spawn_subprocess(f'squeue -j {str(batch_id)}', show_cmd=False, show_out=False)
@@ -47,52 +47,68 @@ sinfo_desc = """
 """
 
 def watch_job_logs(batch_id, start_time = time.time()):
+    log_out = []
+    prev_log_out_len = 0
+
+    def print_log_out():
+        nonlocal log_out
+        nonlocal prev_log_out_len
+        # this is not working if line is automatically break into 
+        # multiple line if its too long to be shown
+        # mmm what to do with it???
+        clear_last_lines(prev_log_out_len)
+        subprocess.run('clear')
+        output_to_print = "\n".join(log_out)
+        print(output_to_print)
+        # print('should remove', prev_log_out_len, 'lines', log_out)
+        prev_log_out_len = output_to_print.count('\n') + 1
+        # prev_log_out_len = len(output_to_print.split('\n'))
+        log_out = []
+
     while True:
         elapsed_time = time.time() - start_time
         time.sleep(1)
-        logOut = []
         try:
             b_status = get_batch_id_status(batch_id)
 
-            logOut.append(f"time     : {format_seconds_duration(elapsed_time)}")
-            logOut.append(f"Batch id : {batch_id}")
-            logOut.append(f"Status   : {b_status} ({expand_slurm_status_code(b_status)})")
+            log_out.append('')
+            log_out.append(f"time     : {format_seconds_duration(elapsed_time)}")
+            log_out.append(f"Batch id : {batch_id}")
+            log_out.append(f"Status   : {b_status} ({expand_slurm_status_code(b_status)})")
 
             if b_status == 'CF': # or pending state???? not sure
-                logOut.append('~~~ waiting till all slurm nodes will be ready ~~~')
+                log_out.append('~~~ waiting till all slurm nodes will be ready ~~~')
                 sinfo = ssh_head_spawn_subprocess("sinfo", show_cmd=False, show_out=False)
-                logOut.append(sinfo_desc)
-                logOut.append(sinfo)
+                log_out.append(sinfo_desc)
+                log_out.append(sinfo)   
             else: 
                 out = ''
                 try:
+                    log_out.append("================= sbatch =================")
+
                     # I should open ssh and stream file to the terminal like: `tail -f`
+                    is_job_ended = ssh_head_spawn_subprocess(f"squeue -h -j {batch_id}", show_cmd=False, show_out=False)
+
                     out = ssh_head_spawn_subprocess(f"cat {config.HEAD_NODE_APP}/slurm_output/{batch_id}-slurm.out", show_cmd=False, show_out=False)
-                    logOut.append("================= batch output =================")
 
-                    logOut = [colorize_gray(item) for item in logOut]
-                    logOut.append('')
-                    logOut.append(out)
+                    log_out = [colorize_gray(item) for item in log_out]
+                    log_out.append('')
+                    log_out.append(out)
+
+                    if len(is_job_ended) == 0:
+                        log_out.append('')
+                        log_out.append('=== slurm batch is no more available ===')
+                        print_log_out()
+                        break
                 except Exception as e:
-                    logOut.append(f'slurm_output file for {batch_id} does not exist yet')
+                    log_out.append(f'slurm_output file for {batch_id} does not exist yet')
                     sinfo = ssh_head_spawn_subprocess("sinfo", show_cmd=False, show_out=False)
-                    logOut.append(sinfo_desc)
-                    logOut.append(sinfo)
-
-                is_job_ended = ssh_head_spawn_subprocess(f"squeue -h -j {batch_id}", show_cmd=False, show_out=False)
-
-                if len(is_job_ended) == 0:
-                    subprocess.run('clear')
-                    logOut.append('')
-                    logOut.append('=== slurm batch is no more available ===')
-                    print("\n".join(logOut))
-                    break
+                    log_out.append(sinfo_desc)
+                    log_out.append(sinfo)
 
         except Exception as e:
-            logOut.append(f'e: {str(e)} ')
-            print("\n".join(logOut))
+            log_out.append(f'e: {str(e)} ')
+            print_log_out()
             break
 
-        subprocess.run('clear')
-        print("\n".join(logOut))
-
+        print_log_out()

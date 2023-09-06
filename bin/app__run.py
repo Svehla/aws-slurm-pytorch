@@ -13,17 +13,29 @@ def upload_ml_model_into_head_node():
 def install_project_libraries():
     # TODO: spawn installation on compute node via sbatch and store packages on /shared fs
     upload_ml_model_into_head_node()
-    ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./prepare_app_env.py")
+
+    start_time = time.time()
+    # should i setup head node /shared fs via spawning slurm job via sbatch? 
+    # TODO: move this installation into /app/{APP_ID}
+    out = ssh_head_spawn_subprocess(' '.join([
+        f"cd {config.HEAD_NODE_APP_SRC};",
+        "./sbatch_prepare_app_env.py",
+    ]))
+    last_line_of_output = out.splitlines()[-1]
+    batch_id = int(last_line_of_output.split()[-1])
+    watch_job_logs(batch_id, start_time=start_time)
+    # ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./prepare_app_env.py")
 
 # this is good but slow for development so I should hide it behind some cli param i guess
+SHOULD_prepare_app_env = False
 # SHOULD_prepare_app_env = True
-SHOULD_prepare_app_env = True
 
 @timer
 def app__run():
     start_time = time.time()
     upload_ml_model_into_head_node()
 
+    # TODO: read args and send it into compute node script
     # print('aaa')
     if SHOULD_prepare_app_env:
         install_project_libraries()

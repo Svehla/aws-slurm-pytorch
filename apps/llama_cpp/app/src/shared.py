@@ -1,5 +1,6 @@
 # TODO: code duplicity!!!!
 
+import sys
 import subprocess
 
 # do a shared library for /app_{i} with reused code +
@@ -20,7 +21,7 @@ colorize_green = create_colorize_func("92")
 og_print = print
 def create_prefixed_print(log_prefix: str):
     def new_print(*args, **kwargs):
-        if log_prefix:
+        if log_prefix and kwargs.get('end') != '':
             og_print(colorize_green(log_prefix), *args, **kwargs, flush=True) # flush is necessary!
         else:
             og_print(*args, **kwargs, flush=True) # flush is necessary!
@@ -30,31 +31,42 @@ def create_prefixed_print(log_prefix: str):
 print = create_prefixed_print('') # if print is not defined, we need to keep flush=True
 
 
+import io
+
 # TODO: unify exec/spawn subprocesses somehow
-def stream_command_output(cmd, print=print):
+def stream_command_output(cmd, print_std_error=True, print=print):
     print()
     print(colorize_gray(':~$ ') , colorize_yellow(cmd), sep='')
+
     process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-    # line reading...
-    for line in iter(process.stdout.readline, b''):
-        print(line.decode(), end='')
-    for line in iter(process.stderr.readline, b''):
-        print(line.decode(), end='')
+    def read_and_print(stream):
+        output_str = ''
+        while True:
+            output = stream.read(1)
+            if output == '' and process.poll() is not None:
+                break
+            if output != '':
+                print(output, end='')
+                output_str += output
+        return output_str
 
-    # char reading
-    while process.poll() is None:
-        stdout = process.stdout.read(1).decode()
-        if stdout:
-            print(stdout, end='', flush=True)
-        stderr = process.stderr.read(1).decode()
-        if stderr:
-            print(stderr, end='', flush=True)
+
+    # without io wrapper i could not decode and print special utf-8 chars like: áé
+    stdout = io.TextIOWrapper(process.stdout, encoding='utf-8')
+    stdout_str = read_and_print(stdout)
+
+    if print_std_error:
+        stderr = io.TextIOWrapper(process.stderr, encoding='utf-8')
+        read_and_print(stderr)
+
+    print('----------')
+    print(stdout_str)
 
     process.stdout.close()
     process.stderr.close()
     process.wait()
-
+    return stdout_str
 
 def spawn_subprocess(cmd: str, show_cmd=True, show_out=True, print=print):
     if show_cmd:

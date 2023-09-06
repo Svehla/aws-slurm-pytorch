@@ -29,3 +29,5 @@ stream_command_output(' && '.join([
     # needs to have activated venv (if not) to install pip3 deps
     'pip3 install -r ./requirements.txt'
 ]), print=print) # took ~4min
+
+

@@ -2,7 +2,7 @@
 import subprocess
 import time
 from src.timer import format_seconds_duration
-from src.colorize_shell import colorize_yellow, colorize_gray, colorize_blue, colorize_red
+from src.magic_shells import colorize_yellow, colorize_gray, colorize_blue, colorize_red
 
 # TODO: rewrite check_output with subprocess.Popen(...) to have continuous logs
 # I want to have similar tooling for local spawn as for ssh-ing into HeadNode

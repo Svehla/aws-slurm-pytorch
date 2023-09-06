@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from src.config import config, infraState
 from src.spawn_subprocess import spawn_subprocess
-from src.colorize_shell import colorize_yellow, colorize_blue, colorize_gray
+from src.magic_shells import colorize_yellow, colorize_blue, colorize_gray
 from src.before_connection import sh_before_connection
 from src.array import filter_empty_items
 
@@ -15,6 +15,7 @@ def escape_bash_quotes(s):
     # it escapes single quotes. In bash, to insert a single quote into a single-quoted string, 
     #   we end the current string, insert an escaped single quote, and start a new string. 
     #   Hence, "'\\''" is used to insert a single quote.
+    #   it's better to not to use ' in bash command if its not needed
     s = s.replace("'", "'\\''")
     return s
 
@@ -59,3 +60,17 @@ def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_ou
         # print_prefix=print_prefix
     )
     return out
+
+
+def ssh_compute_spawn_subprocess(node_id: str, cmd):
+    return ssh_head_spawn_subprocess(
+        # TODO: add proper escaping
+        ' '.join([
+            "ssh", 
+            '-o StrictHostKeyChecking=no',
+            node_id, 
+            f''' 'bash -c "{escape_bash_quotes(cmd)}"' '''
+        ]),
+        show_out=False,
+        show_cmd=False
+    )
