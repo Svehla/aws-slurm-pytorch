@@ -42,11 +42,20 @@ def infra__monitor_system_usage():
                 logOut.append('')
                 logOut.append(f'-----{node["node"]}-----')
 
+
+                # TODO: very very fast hack to have fast almost realtime GPU usage
+                all_usage = ssh_compute_spawn_subprocess(
+                    node['node'],
+                    'while true; do clear; nvidia-smi; sleep 0.2; done',
+                    show_out=True
+                )
+                # 'while true; do clear; nvidia-smi; sleep 0.2; done',
+                """
                 all_usage = ssh_compute_spawn_subprocess(
                     node['node'], 
                     ' && '.join([
-                        'echo;'
-                        'nvidia-smi',
+                        # 'echo;'
+                        # 'nvidia-smi',
                         # TODO: call this in parallel and then merge it
                         # 'echo;'
                         # 'df -h',
@@ -56,6 +65,7 @@ def infra__monitor_system_usage():
                         # 'top -b -n 1 | grep "Cpu(s)"'
                     ])
                 )
+                """
                 logOut.append(all_usage)
                 logOut.append('')
 

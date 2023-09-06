@@ -27,6 +27,7 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
     stdout_output = []
     stderr_output = []
 
+    # TODO: should i print it over chars, not lines? similar as llama shared utils stream?
     for line in iter(process.stdout.readline, ''):
         line_decoded = line.rstrip('\n')
         stdout_output.append(line_decoded)

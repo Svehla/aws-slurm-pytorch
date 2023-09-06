@@ -62,7 +62,7 @@ def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_ou
     return out
 
 
-def ssh_compute_spawn_subprocess(node_id: str, cmd):
+def ssh_compute_spawn_subprocess(node_id: str, cmd, show_out=False, show_cmd=False):
     return ssh_head_spawn_subprocess(
         # TODO: add proper escaping
         ' '.join([
@@ -71,6 +71,6 @@ def ssh_compute_spawn_subprocess(node_id: str, cmd):
             node_id, 
             f''' 'bash -c "{escape_bash_quotes(cmd)}"' '''
         ]),
-        show_out=False,
-        show_cmd=False
+        show_out=show_out,
+        show_cmd=show_cmd
     )

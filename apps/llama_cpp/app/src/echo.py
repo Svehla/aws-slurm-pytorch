@@ -28,7 +28,8 @@ print("Running llama.cpp sever")
 
 """
 
-# creating SSH tunnel over 2 jumps
+# === SSH tunnel to compute node for llama server ===
+# TODO: automate ssh tunnel into .sh script into asd tool
 # enable port forwarding
 sudo vim /etc/ssh/sshd_config
 AllowTcpForwarding yes
@@ -37,6 +38,24 @@ sudo systemctl restart ssh
 pcluster ssh --cluster-name pytorch-ddp-tutor -o StrictHostKeyChecking=no -i ./secrets/secret_key_pair.pem -L 8080:pytorch-queue-1-gpu-dy-my-small-gpu-node-1:8080 -N
 # pcluster ssh --cluster-name pytorch-ddp-tutor -o StrictHostKeyChecking=no -i ./secrets/secret_key_pair.pem -L 8080:10.0.2.177:8080 -N
 
+# === llama grammar ===
+# grammar:
+https://grammar.intrinsiclabs.ai/
+
+root ::= Question
+Question ::= "{"   ws   "\"extractedQuestion\":"   ws   string   ","   ws   "\"answer\":"   ws   string   "}"
+Questionlist ::= "[]" | "["   ws   Question   (","   ws   Question)*   "]"
+string ::= "\""   ([^"]*)   "\""
+boolean ::= "true" | "false"
+ws ::= [ \t\n]*
+number ::= [0-9]+   "."?   [0-9]*
+stringlist ::= "["   ws   "]" | "["   ws   string   (","   ws   string)*   ws   "]"
+numberlist ::= "["   ws   "]" | "["   ws   string   (","   ws   number)*   ws   "]"
+
+
+# === system usage monitor ===
+# fast GPU usage response via ssh attach
+while true; do clear; nvidia-smi; sleep 0.2; done
 
 """
 # ===================== server =====================
