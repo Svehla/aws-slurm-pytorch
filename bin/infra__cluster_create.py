@@ -13,8 +13,8 @@ def compile_pcluster_config_template():
     return pcluster_template \
         .replace(
             '{{SSH_HEAD_NODE_KEY_PAIR_NAME}}',
-            # TODO: should i have shared key_pair across clusters? or generate shared one for all clusters
-            f"key_pair_{config.CLUSTER_NAME}"
+            # TODO: should key_pair be set in the config file?
+            config.AWS_KEY_PAIR_ID
         ) \
         .replace('{{REGION}}', config.REGION) \
         .replace('{{SUBNET_ID}}', infraState.subnet_id)

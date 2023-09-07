@@ -24,12 +24,18 @@ SharedStorage:
     StorageType: Ebs
     EbsSettings:
       VolumeType: gp2
-      VolumeSize: 200
+      Size: 200
+
 
 # t2.micro is too small to install pytorch (it throws out of memory) 
 # TODO: make somehow bigger space of head node
+# t2.small => $0.023 (1cpu, 2ram)
+# t2.medium => $0.046 (2cpu, 4ram)
+# c5.large => $0.085 (2cpu, 4ram)
 HeadNode:
-  InstanceType: c5.large
+  # TODO: put cheaper instance here, all compute heavy tasks are made by compute nodes right now
+  # c5.large
+  InstanceType: t2.medium
   Networking:
     SubnetId: {{SUBNET_ID}}
   Ssh:

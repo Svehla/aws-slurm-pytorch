@@ -34,7 +34,7 @@ print = create_prefixed_print('') # if print is not defined, we need to keep flu
 import io
 
 # TODO: unify exec/spawn subprocesses somehow
-def stream_command_output(cmd, print_std_error=True, print=print):
+def stream_command_output(cmd, print=print):
     print()
     print(colorize_gray(':~$ ') , colorize_yellow(cmd), sep='')
 
@@ -54,11 +54,10 @@ def stream_command_output(cmd, print_std_error=True, print=print):
 
     # without io wrapper i could not decode and print special utf-8 chars like: áé
     stdout = io.TextIOWrapper(process.stdout, encoding='utf-8')
-    stdout_str = read_and_print(stdout)
+    stderr = io.TextIOWrapper(process.stderr, encoding='utf-8')
 
-    if print_std_error:
-        stderr = io.TextIOWrapper(process.stderr, encoding='utf-8')
-        read_and_print(stderr)
+    stdout_str = read_and_print(stdout)
+    read_and_print(stderr)
 
     print('----------')
     print(stdout_str)

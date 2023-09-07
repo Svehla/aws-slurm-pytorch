@@ -1,12 +1,14 @@
 
 {
     // TODO: should this file be in the git repo"
-    "CLUSTER_NAME": "pytorch-ddp-tutor",
+    "CLUSTER_NAME": "ddp-cluster",
     "REGION": "eu-central-1",
     "PEM_PATH": "./secrets/secret_key_pair.pem",
 
     // note now the config supports 1 cluster with 1 running app in the one instance oc user_cluster_config.json
     "CURRENT_ACTIVE_APP_DIR": "llama_cpp",
+
+    "AWS_KEY_PAIR_ID": "key_pair_pytorch-ddp-tutor"
 
     // TODO: how to resolve ssh venv sourcing for multi-app support????
 }

@@ -5,7 +5,6 @@
 from src.config import config, infraState
 from src.spawn_subprocess import spawn_subprocess
 import boto3 
-from pathlib import Path
 from src.cluster_state_utils import invalidate_subnet_id_cache
 import subprocess
 
@@ -20,9 +19,8 @@ create VPC by this tutorial: https://github.com/aws/aws-parallelcluster/blob/dev
 2. create VPC
 """
 def create_key_pairs():
-    # duplicated with config file
-    # TODO: should name of file be in the config as well?
-    key_pair_name = f"key_pair_{config.CLUSTER_NAME}"
+    # TODO: should key_pair be set in the config file?
+    key_pair_name = config.AWS_KEY_PAIR_ID
 
     response = ec2.create_key_pair(KeyName=key_pair_name)
     key_material = response['KeyMaterial']

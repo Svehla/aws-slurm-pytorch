@@ -128,24 +128,21 @@ import time
 
 print("")
 print("-----------------------")
-print("USER ACTION REQUIRED!!!")
+print("USER ACTION REQUIRED!!! => bad CLI UI automation")
 download_wget_cmd =' '.join([
-    'cd .. && cd models && ',
+    'cd models && ',
     # 'curl -L -O  https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML/resolve/main/llama-2-13b-chat.ggmlv3.q2_K.bin'
 
     # only one working solution i guess...???
     "wget https://huggingface.co/substratusai/Llama-2-13B-chat-GGUF/resolve/main/model.bin"
 
-    # ???
-    # "wget https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML/blob/main/llama-2-13b-chat.ggmlv3.q3_K_M.bin"
-
     # available models:
     # > https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML/tree/main
-    "wget https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML/resolve/main/llama-2-13b-chat.ggmlv3.q3_K_M.bin"
+    # "wget https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML/resolve/main/llama-2-13b-chat.ggmlv3.q3_K_M.bin"
 
     # llama.cpp readme source: 
     # https://huggingface.co/openlm-research/open_llama_13b
-    "wget https://huggingface.co/openlm-research/open_llama_13b/resolve/main/pytorch_model-00001-of-00003.bin" 
+    # "wget https://huggingface.co/openlm-research/open_llama_13b/resolve/main/pytorch_model-00001-of-00003.bin" 
 ])
 print("")
 print("-----------------------")

@@ -17,8 +17,10 @@
 - better prettier + eslint tooling
 
 
+
 ## TODO:
 - Pytorch profiler https://pytorch.org/tutorials/intermediate/tensorboard_profiler_tutorial.html 
+- what about wrap cli into docker image?
 - nvidia hw profiler via CLI + via AWS dashboard cloudwatch
 - Local development
 - Jupyter notebook support

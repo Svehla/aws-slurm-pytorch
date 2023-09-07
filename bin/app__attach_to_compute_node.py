@@ -9,7 +9,6 @@ def app__attach_to_compute_node():
     print('TODO: implement attach_to_compute_node')
     print(active_nodes)
 
-
     node_to_connect = active_nodes[0]
     print(node_to_connect)
     print("TODO: select node which you want to connect")

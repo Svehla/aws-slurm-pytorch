@@ -13,7 +13,7 @@ user_config = loads(file_path.read_text())
 
 json_validate(
     user_config,
-    ["CLUSTER_NAME", "REGION", "PEM_PATH", "CURRENT_ACTIVE_APP_DIR"],
+    ["CLUSTER_NAME", "REGION", "PEM_PATH", "CURRENT_ACTIVE_APP_DIR", "AWS_KEY_PAIR_ID"],
     err_prefix="user_cluster_config.json is not valid,"
 )
 
@@ -29,6 +29,7 @@ class Config:
     CLUSTER_NAME = user_config['CLUSTER_NAME']
     REGION = user_config['REGION']
     PEM_PATH =  user_config['PEM_PATH']
+    AWS_KEY_PAIR_ID =  user_config['AWS_KEY_PAIR_ID']
 
     # --- 1 app instance config --- 
     APP_DIR = app_dir

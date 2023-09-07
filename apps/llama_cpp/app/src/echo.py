@@ -77,7 +77,7 @@ stream_command_output(' '.join([
     # '--repeat_penalty 1.1 -n -1',
     # '-p "### Instruction: Write me a Python program that takes in user input and greets the user with their name.\n### Response:"'
     # f'-p "{chat_prompt}"'
-]), print_std_error=True, print=print)
+]), print=print)
 
 print("THIS SHOULD NEVER BE SHOWN!!!!!")
 
@@ -101,7 +101,7 @@ stream_command_output(' '.join([
     # '--repeat_penalty 1.1 -n -1',
     # '-p "### Instruction: Write me a Python program that takes in user input and greets the user with their name.\n### Response:"'
     f'-p "{chat_prompt}"'
-]), print_std_error=True, print=print)
+]), print=print)
 
 # LLama GPU CLI exec
 """
