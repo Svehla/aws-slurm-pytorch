@@ -98,8 +98,10 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
     return stdout
 
 """
+# TODO: Fix streaming tokens and lines and make it elegant somehow
 
 
+import sys
 import io
 import time
 import subprocess
@@ -116,27 +118,55 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
     process = subprocess.Popen(
         cmd,
         shell=True,
-        stdout=subprocess.PIPE,
+        # nice piping output 
+        stdout=sys.stdout,
+        # stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
+    # process.wait()
 
-    stdout_output = ""
-    stderr_output = ""
+    # stdout_output = ""
+    # stderr_output = ""
 
-    stdout_wrapper = io.TextIOWrapper(process.stdout, encoding='utf-8')
-    stderr_wrapper = io.TextIOWrapper(process.stderr, encoding='utf-8')
+    # stdout_wrapper = io.TextIOWrapper(process.stdout, encoding='utf-8')
+    # stderr_wrapper = io.TextIOWrapper(process.stderr, encoding='utf-8')
 
-    for char in iter(lambda: stdout_wrapper.read(1), ''):
-        stdout_output += char
-        if show_out: 
-            print(colorize_blue(print_prefix), char, sep='', end='')
-            # time.sleep(0.01)
+    # Initialize a variable to keep track of whether we're inside an escape sequence
+    # support colors token streams
+    
+    # ----
+    # def process_stream(stream, print_prefix, show_out):
+    #     wrapper = io.TextIOWrapper(stream, encoding='utf-8')
 
-    for char in iter(lambda: stderr_wrapper.read(1), ''):
-        stderr_output += char
-        if show_out: 
-            print(colorize_blue(print_prefix), char, sep='', end='')
-            # time.sleep(0.01)
+    #     # Initialize a variable to keep track of whether we're inside an escape sequence
+    #     inside_escape_sequence = False
+    #     escape_sequence = ''
+    #     output = ''
+
+    #     for char in iter(lambda: wrapper.read(1), ''):
+    #         if char == '\033':
+    #             # We've encountered the start of an escape sequence
+    #             inside_escape_sequence = True
+    #             escape_sequence += char
+    #         elif inside_escape_sequence:
+    #             # We're inside an escape sequence, so add the character to the escape sequence string
+    #             escape_sequence += char
+    #             if escape_sequence.endswith('\033[0m'):
+    #                 # We've encountered the end of the escape sequence
+    #                 print(escape_sequence, end='')  # Print the escape sequence directly
+    #                 inside_escape_sequence = False
+    #                 escape_sequence = ''
+    #         else:
+    #             output += char
+    #             if show_out: 
+    #                 print(colorize_blue(print_prefix), char, sep='', end='')
+    #                 time.sleep(0.01)
+    #     return output
+
+    # # Use the function to process the stdout and stderr streams
+    # stdout_output = process_stream(process.stdout, print_prefix, show_out)
+    # stderr_output = process_stream(process.stderr, print_prefix, show_out)
+
 
     if "Warning: Permanently added" in stderr_output:
         print(colorize_red('HACK: stderr ssh Warning do not throw error !!!'))
@@ -150,5 +180,6 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
         elapsed_time = time.time() - start_time
         print(colorize_gray(f"~took: {format_seconds_duration(elapsed_time)}"))
 
-    return stdout_output
+    # print(stdout_output)
+    # return stdout_output
 """

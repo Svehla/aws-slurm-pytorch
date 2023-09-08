@@ -61,6 +61,7 @@ while true; do clear; nvidia-smi; sleep 0.2; done
 # ===================== server =====================
 # run llama server:
 # never ending task!
+# run server took around ~1.5min
 stream_command_output(' '.join([
     # run make only for the first time???? not sure
     'cd .. && cd llama.cpp &&',
@@ -80,7 +81,14 @@ stream_command_output(' '.join([
 ]), print=print)
 
 print("THIS SHOULD NEVER BE SHOWN!!!!!")
+print("THIS SHOULD NEVER BE SHOWN!!!!!")
+print("THIS SHOULD NEVER BE SHOWN!!!!!")
+print("THIS SHOULD NEVER BE SHOWN!!!!!")
+print("THIS SHOULD NEVER BE SHOWN!!!!!")
+print("THIS SHOULD NEVER BE SHOWN!!!!!")
+print("THIS SHOULD NEVER BE SHOWN!!!!!")
 
+"""
 
 # TODO: download proper weights:
 # https://github.com/ggerganov/llama.cpp#using-openllama
@@ -102,7 +110,7 @@ stream_command_output(' '.join([
     # '-p "### Instruction: Write me a Python program that takes in user input and greets the user with their name.\n### Response:"'
     f'-p "{chat_prompt}"'
 ]), print=print)
-
+"""
 # LLama GPU CLI exec
 """
 ./main -m ../models/model.bin \

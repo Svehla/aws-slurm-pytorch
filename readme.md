@@ -20,6 +20,9 @@ echo "... ..." >> touch user_cluster_config.json
 # artificial software development
 alias asd=~/Desktop/pytorch_parallel_training/bin/index.py
 
+# setup default region on to ~/.aws/config
+[default]
+region = eu-central-1
 ```
 
 

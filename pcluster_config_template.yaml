@@ -1,6 +1,20 @@
 Region: {{REGION}}
 Image:
   Os: ubuntu2004 
+  # mmm....
+  # Cluster status   : CREATE_FAILED => needs to be created via pcluster CLI
+  # custom AMI applied to Head + compute nodes?
+  # https://aws.amazon.com/blogs/hpc/custom-amis-with-parallelcluster-3/
+  # CustomAmi: ami-0bbe1f8dbd94bdf07
+
+  # I need to try 
+  # 1. EC2 => it works
+  CustomAmi: ami-0c078394f90de4df5
+  # 2. EC2 wrapped by pcluster build-image => it works
+  # CustomAmi: ami-0339a9a18eda12cb3
+  # 3. try to do a build made by IMAGE_CONFIG.yaml
+  # CustomAmi: ????
+
 
 # inspiration:
 # https://github.com/pytorch/examples/blob/main/distributed/ddp-tutorial-series/slurm/config.yaml.template

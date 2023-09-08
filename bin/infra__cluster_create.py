@@ -27,6 +27,10 @@ def compile_pcluster_config_template():
 def spawn_cluster_creation():
 
     pcluster_config_yaml = compile_pcluster_config_template()
+    # print('--------------------')
+    # print('pcluster_config_yaml')
+    # print(pcluster_config_yaml)
+    # return
 
     with tempfile.NamedTemporaryFile('w', dir='./temp', suffix='_compiled_pcluster_config.yaml', delete=True) as temp_file:
         temp_file.write(pcluster_config_yaml)

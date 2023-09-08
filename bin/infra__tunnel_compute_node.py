@@ -31,6 +31,7 @@ def open_ssh_tunnel_from_head_node(port, host='127.0.0.1'):
 
 LLAMA_SERVER_PORT = 8080
 
+# TODO: what about open LLAMA into internet via public IP addr?
 def infra__tunnel_ssh(): 
     enable_head_node_ssh_tunneling()
 

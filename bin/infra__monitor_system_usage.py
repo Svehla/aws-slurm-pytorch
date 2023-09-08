@@ -26,21 +26,21 @@ def infra__monitor_system_usage():
         # time.sleep(3)
 
         elapsed_time = time.time() - start_time
-        logOut = []
+        log_out = []
 
         active_nodes = get_active_compute_nodes()
 
-        logOut.append(f'elapsed {format_seconds_duration(elapsed_time)}')
+        log_out.append(f'elapsed {format_seconds_duration(elapsed_time)}')
 
         if len(active_nodes) == 0:
-            logOut.append(f'no active nodes right now')
+            log_out.append(f'no active nodes right now')
 
         # TODO: do those ssh in parallel via sub processes
         # one sync iteration for 1 node took ~11sec, without ssh overhead it took ~6sec
         for node in active_nodes:
             try:
-                logOut.append('')
-                logOut.append(f'-----{node["node"]}-----')
+                log_out.append('')
+                log_out.append(f'-----{node["node"]}-----')
 
 
                 # TODO: very very fast hack to have fast almost realtime GPU usage
@@ -66,8 +66,8 @@ def infra__monitor_system_usage():
                     ])
                 )
                 """
-                logOut.append(all_usage)
-                logOut.append('')
+                log_out.append(all_usage)
+                log_out.append('')
 
                 # TODO: do those ssh in parallel via sub processes
                 """
@@ -75,20 +75,20 @@ def infra__monitor_system_usage():
                 disk_usage = ssh_compute_spawn_subprocess(node['node'], 'df -h')
                 ram_usage = ssh_compute_spawn_subprocess(node['node'], 'free -h')
                 cpu_usage = ssh_compute_spawn_subprocess(node['node'], 'top -b -n 1 | grep "Cpu(s)"')
-                logOut.append(gpu_usage)
-                logOut.append('')
-                logOut.append(cpu_usage)
-                logOut.append('')
-                logOut.append(disk_usage)
-                logOut.append('')
-                logOut.append(ram_usage)
+                log_out.append(gpu_usage)
+                log_out.append('')
+                log_out.append(cpu_usage)
+                log_out.append('')
+                log_out.append(disk_usage)
+                log_out.append('')
+                log_out.append(ram_usage)
                 """
             except Exception as e:
-                logOut.append(f"some err occurred: {e}")
+                log_out.append(f"some err occurred: {e}")
 
 
         subprocess.run('clear')
-        print("\n".join(logOut))
+        print("\n".join(log_out))
 
 
 

@@ -26,7 +26,7 @@ gpu_partition_map = {
 
 try:
     partition = gpu_partition_map[GPUS_PER_NODE_COUNT]
-except KeyError:
+except Exception as e:
     print("Invalid GPUS_PER_NODE_COUNT. It must be 1, 2, or 4.")
     sys.exit(1)
 

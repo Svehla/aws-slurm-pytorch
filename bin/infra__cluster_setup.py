@@ -19,6 +19,12 @@ def install_head_node():
         'sudo DEBIAN_FRONTEND=noninteractive apt-get update -y',
         # install venv globally for whole cluster
         'sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv',
+    
+        # install venv
+        # f'python3 -m venv /shared/head_node/venv/',
+        # 'source /shared/head_node/venv/ && pip3 install tensorboard==2.14.0',
+
+        # apache / nginx
     ]
 
     for cmd in cmds:
