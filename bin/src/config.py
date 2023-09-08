@@ -38,7 +38,6 @@ class Config:
     HEAD_NODE_APP = f"/shared/{app_dir}"
     HEAD_NODE_APP_SRC = f"/shared/{app_dir}/app"
     HEAD_NODE_USER = "ubuntu"
-    KEY_PAIR_NAME = 'secret_key_pair'
 
 config = Config()
 

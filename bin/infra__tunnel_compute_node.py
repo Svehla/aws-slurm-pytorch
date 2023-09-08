@@ -19,6 +19,15 @@ def enable_head_node_ssh_tunneling():
 
     print("SSH tunnel is enabled")
 
+def open_ssh_tunnel_from_head_node(port, host='127.0.0.1'):
+    spawn_subprocess(' '.join([
+        f'pcluster ssh --cluster-name {config.CLUSTER_NAME}',
+        '-o StrictHostKeyChecking=no',
+        f'-i {config.PEM_PATH}',
+        # tunneling into HEAD node
+        f' -L {port}:{host}:{port} -N'
+    ]))
+
 
 LLAMA_SERVER_PORT = 8080
 
@@ -35,13 +44,12 @@ def infra__tunnel_ssh():
 
     node_to_connect = active_nodes[0]
 
-    spawn_subprocess(' '.join([
-        f'pcluster ssh --cluster-name {config.CLUSTER_NAME}',
-        '-o StrictHostKeyChecking=no',
-        f'-i {config.PEM_PATH}',
-        # tunneling
-        f' -L {LLAMA_SERVER_PORT}:{node_to_connect["node"]}:{LLAMA_SERVER_PORT} -N'
-    ]))
+    # TODO: i do SSH tunnel into head node and then sending traffic from another node
+    # TODO: there should be two ssh tunnels i guess
+    open_ssh_tunnel_from_head_node(host=node_to_connect['node'], port=LLAMA_SERVER_PORT)
 
 if __name__ == "__main__":
     infra__tunnel_ssh()
+
+# pcluster ssh --cluster-name ddp-cluster -o StrictHostKeyChecking=no -i ./secrets/secret_key_pair.pem  -L 8080:pytorch-queue-1-gpu-dy-my-small-gpu-node-1:8080 -N
+# pcluster ssh --cluster-name ddp-cluster -o StrictHostKeyChecking=no -i ./secrets/secret_key_pair.pem  -L 8080:pytorch-queue-1-gpu-dy-my-small-gpu-node-1:8080 -N

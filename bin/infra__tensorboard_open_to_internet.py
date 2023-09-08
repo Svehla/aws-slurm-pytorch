@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# TODO: should I open tensorboard into internet or just do SSH tunnel into localhost
 from src.config import infraState
 from src.spawn_subprocess import spawn_subprocess
 import requests

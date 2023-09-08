@@ -20,16 +20,15 @@ create VPC by this tutorial: https://github.com/aws/aws-parallelcluster/blob/dev
 """
 def create_key_pairs():
     # TODO: should key_pair be set in the config file?
-    key_pair_name = config.AWS_KEY_PAIR_ID
 
-    response = ec2.create_key_pair(KeyName=key_pair_name)
+    response = ec2.create_key_pair(KeyName=config.AWS_KEY_PAIR_ID)
     key_material = response['KeyMaterial']
 
     with open(config.PEM_PATH, 'w') as file:
         file.write(key_material)
 
     spawn_subprocess(f'chmod 400 {config.PEM_PATH}')
-    return key_pair_name
+    return config.AWS_KEY_PAIR_ID
 
 vpc_name = f'VPC_{config.CLUSTER_NAME}'
 
@@ -102,8 +101,8 @@ def create_vpc_with_user_interaction():
 
 def infra__cluster_vpc_init():
     # 1.
-    key_pair_name = create_key_pairs()
-    print(f"Key pair : {key_pair_name} created")
+    create_key_pairs()
+    print(f"Key pair : {config.AWS_KEY_PAIR_ID} created")
     # 2.
     vpc_id = create_vpc_with_user_interaction() 
     print(f"VPC      :{vpc_id} created")

@@ -1,5 +1,42 @@
 #!/usr/bin/env python3
+# this script took ~6min
 
+# TODO: create custom AMI instance for DL
+# if I install everything into /shared it will not be included into AMI
+# so i could remove apps from /shared and rename this script into
+# `prepare_aws_ami` or something like this...
+
+
+"""
+# Custom AMI vs /shared file system
+
+
+## Custom AMI with pre-installed libs
+
+1. Speed: 
+Instances launch faster as all necessary libraries are already installed.
+No need to wait for PyTorch installation each time an instance is launched.
+
+2. Consistency: Each instance will have the same configuration, simplifying
+debugging and testing.
+
+3. Security: You can limit internet access for instances as they don't need to download
+libraries upon launch.
+
+## Shared disk with virtual-env
+
+1. Flexibility: You can easily add or update libraries without the need to create a new AMI.
+
+2. Data Sharing: Shared disk can also be useful for sharing data between instances.
+
+## Custom AMI downtimes
+4. need to rebuild cluster every time i change custom AMI deps per /apps/{app}/dependency
+5. i could create base AMI shared image with custom prepare_scripts?
+6. scoping venv enable support multiple versions of pytorch in one cluster
+
+
+is nvcc 
+"""
 
 # TODO: create python modules to fix it somehow
 import sys

@@ -47,6 +47,8 @@ Scheduling:
   - Name: pytorch-queue-1-gpu
     ComputeResources:
     - Name: my-small-gpu-node
+      # ami-0abcd1234efgh5678 
+      # ImageId: {{IMAGE_ID}}
       Instances:
       - InstanceType: g4dn.xlarge
       MinCount: 0
@@ -71,7 +73,6 @@ Scheduling:
     - Name: my-large-gpu-node
       Instances:
       - InstanceType: g4dn.12xlarge
-
       MinCount: 0
       MaxCount: 2
     Networking:

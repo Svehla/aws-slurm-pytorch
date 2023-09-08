@@ -27,6 +27,7 @@
         "ipynb",
         "irecv",
         "isend",
+        "kubas",
         "logdir",
         "MNIST",
         "mpstat",

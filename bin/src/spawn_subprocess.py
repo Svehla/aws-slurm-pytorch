@@ -41,7 +41,6 @@ from src.magic_shells import colorize_yellow, colorize_gray, colorize_blue, colo
 # TODO: rewrite check_output with subprocess.Popen(...) to have continuous logs
 # I want to have similar tooling for local spawn as for ssh-ing into HeadNode
 # TODO: is it correct name of the function?
-"""
 def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, print_prefix=''):
     if show_time:
         start_time = time.time()
@@ -97,8 +96,8 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
         print(colorize_gray(f"~took: {format_seconds_duration(elapsed_time)}"))
 
     return stdout
-"""
 
+"""
 
 
 import io
@@ -152,3 +151,4 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_time=True, show_out=True, pri
         print(colorize_gray(f"~took: {format_seconds_duration(elapsed_time)}"))
 
     return stdout_output
+"""

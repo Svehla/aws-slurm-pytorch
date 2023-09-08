@@ -79,9 +79,13 @@ g3.8xlarge    - 2 NVIDIA GPU ($2.28/h)
 
 each app has 2 files that works as an API to enable automating infrastructure with app implementation
 
-1. `prepare_app_env.py` install deps inside of previously set venv
+0. prepare shared DL preinstalled AMI
 
-2. `./sbatch_exec.py` this file will be run => rename tu exec_run ????
+1. `./sbatch_prepare_app_env.py`
+
+2. `./prepare_data.py` # TODO: not implemented yet
+
+3. `./sbatch_exec.py` 
 
 all needs to use venv right now
 
