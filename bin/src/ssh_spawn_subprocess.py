@@ -22,26 +22,18 @@ def escape_bash_quotes(s):
 
 
 
-def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_out=True):
-    init_command = ''
-
-    if infraState.ip == None:
-        raise Exception(f"infraState.ip is None, be sure that you have active pcluster")
-        
-    print_prefix = '[ssh->head]'
-
-    if activate_sources:
-        make_slurm_commands_available = 'source /etc/profile'
-        # sh_before_connection
-        init_command = ';'.join(filter_empty_items([make_slurm_commands_available, sh_before_connection])) + ';'
+# target_source will be smth like ubuntu@{IP}
+def cmd_over_ssh(target_source, pem_path, cmd, show_cmd=True, show_out=True, alias=''):
+    print_prefix = f'[{alias if alias else target_source}]'
 
     sh_wrapped_command = ' '.join([
         'ssh', 
         # automatically add host into ~/.ssh/known_hosts
         '-o StrictHostKeyChecking=no',
-        '-i', config.PEM_PATH,
-        f'{config.HEAD_NODE_USER}@{infraState.ip}', 
-        f''' 'bash -c "{escape_bash_quotes(f'{init_command} {cmd}')}"' '''
+        '-i', pem_path,
+        target_source,
+        # f'{config.HEAD_NODE_USER}@{infraState.ip}', 
+        f''' 'bash -c "{escape_bash_quotes(cmd)}"' '''
     ])
 
     if show_cmd:
@@ -60,17 +52,24 @@ def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_ou
         # print_prefix=print_prefix
     )
     return out
+    
+
+def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_out=True):
+    init_command = ''
+    if activate_sources:
+        make_slurm_commands_available = 'source /etc/profile'
+        # sh_before_connection
+        init_command = ';'.join(filter_empty_items([make_slurm_commands_available, sh_before_connection])) + ';'
+
+    if infraState.ip == None:
+        raise Exception(f"infraState.ip is None, be sure that you have active pcluster")
+
+    return cmd_over_ssh(
+        f"{config.HEAD_NODE_USER}@{infraState.ip}",
+        config.PEM_PATH,
+        f'{init_command} {cmd}', show_cmd, show_out
+    )
 
 
 def ssh_compute_spawn_subprocess(node_id: str, cmd, show_out=False, show_cmd=False):
-    return ssh_head_spawn_subprocess(
-        # TODO: add proper escaping
-        ' '.join([
-            "ssh", 
-            '-o StrictHostKeyChecking=no',
-            node_id, 
-            f''' 'bash -c "{escape_bash_quotes(cmd)}"' '''
-        ]),
-        show_out=show_out,
-        show_cmd=show_cmd
-    )
+    return cmd_over_ssh(node_id, config.PEM_PATH, cmd, show_out, show_cmd)

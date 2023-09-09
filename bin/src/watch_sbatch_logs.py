@@ -1,6 +1,6 @@
 import time
 import subprocess
-from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
+from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
 from src.config import config
 from src.timer import format_seconds_duration
 from src.magic_shells import colorize_gray, clear_last_lines

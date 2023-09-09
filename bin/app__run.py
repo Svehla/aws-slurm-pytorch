@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from src.config import config
-from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
+from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
 from src.timer import timer
 from src.watch_sbatch_logs import watch_job_logs

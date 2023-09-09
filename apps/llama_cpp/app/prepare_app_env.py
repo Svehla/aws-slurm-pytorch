@@ -55,6 +55,9 @@ import os
 print = create_prefixed_print('[llama.cpp->prepare_app_env]') 
 
 
+spawn_subprocess('echo "hello out of sh script" from sh')
+
+'''
 # TODO: download cuda toolkit
 # full cuda driver is not available
 # An instance with an attached NVIDIA GPU, such as a P3 or G4dn instance,
@@ -74,6 +77,7 @@ sudo apt install nvidia-cuda-toolkit
 spawn_subprocess("sudo apt-get update")
 spawn_subprocess("sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nvidia-cuda-toolkit") # install cuda drivers
 spawn_subprocess("nvcc --version")
+'''
 
 repo_url = "https://github.com/ggerganov/llama.cpp"
 local_path = "llama.cpp"
@@ -167,7 +171,7 @@ print("")
 print("-----------------------")
 print("USER ACTION REQUIRED!!! => bad CLI UI automation")
 download_wget_cmd =' '.join([
-    'cd models && ',
+    'cd /shared/llama_cpp/models && ',
     # 'curl -L -O  https://huggingface.co/TheBloke/Llama-2-13B-chat-GGML/resolve/main/llama-2-13b-chat.ggmlv3.q2_K.bin'
 
     # only one working solution i guess...???

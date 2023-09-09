@@ -8,41 +8,33 @@ from app__ssh_connect import escape_bash_quotes
 import time
 from functools import lru_cache
 from src.timer import timer
-import tempfile
-import subprocess
+from src.ssh_spawn_subprocess import cmd_over_ssh
+from src.monitor_progress import monitor_progress 
+# import tempfile
+# import subprocess
 
 # ml_ami == Machine learning ami
 my_instance_name = 'custom-ml_ami_image_preparation'
+# TODO: will AMI work even for different instance type with similar settings???
 instance_type = 'g4dn.xlarge'
-# Ubuntu 64-bit (x86) => ID found on AWS CLI => i picked it
-# some_ubuntu_64_bit = 'ami-04e601abe3e1a910'
+
+# ===== SUPER IMPORTANT LINE =====
 # THERE SHOULD BE PCLUSTER AMI!!!!
 # try to rebuild whole script with ami based on parallelcluster... ???
 # THIS NEEDS TO BE FROM PCLUSTER INSTANCE => then we do not need to call 'aws ec2 wait image-available'
-some_ubuntu_64_bit = 'ami-03d19ba6e04d6a411'
+# there are details about picked instance
+# https://eu-central-1.console.aws.amazon.com/ec2/home?region=eu-central-1#ImageDetails:imageId=ami-03d19ba6e04d6a411
+parent_ec2_image = 'ami-03d19ba6e04d6a411'
 
 def create_empty_ami():
-    print('infra__create_custom_dl_ami')
-
-    
-    # aws ec2 run-instances --image-id ami-04e601abe3e1a910f --count 1 
-    # --instance-type g4dn.xlarge 
-    # --key-name key_pair_pytorch-ddp-tutor 
-    # --security-group-ids sg-054975f850b6f0d47 
-    # --subnet-id subnet-023037f0ffa51df25 
-    # --block-device-mappings '[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":200}}]' 
-    # --tag-specifications 'ResourceType=instance,Tags=[{"Key":"Name","Value":"kubas-custom-dl-ami"}]'
+    # aws region is default based on ~/.aws/config 
     # creation took around ~3min
     out = spawn_subprocess(' '.join([
         'aws ec2 run-instances',
-        f'--image-id {some_ubuntu_64_bit}',
+        f'--image-id {parent_ec2_image}',
         '--count 1',
         f'--instance-type {instance_type}',
-        # TODO: add region
         f'--key-name {config.AWS_KEY_PAIR_ID}',
-        # aws region is default based on ~/.aws/config 
-        # is region coded in security group/subnet?
-        # f'--security-group-ids {ec2_head_node_security_group_name}',
         f'--subnet-id {infraState.subnet_id}',
         # 125Gb disk is too small... xd NVCC needs large disks to be install properly
         '--block-device-mappings \'[{"DeviceName":"/dev/sda1","Ebs":{"VolumeSize":200}}]\'',
@@ -70,67 +62,29 @@ def get_ec2_ip():
 
     return ec2_ips[0]
 
-
-# TODO: use shared ssh functions with the rest of the /bin
-# To make SSH working, we need to enable security group with inboud rules
-def ssh_spawn_subprocess(cmd):
+def ssh_head_spawn_subprocess(cmd):
     ip = get_ec2_ip()
-    spawn_subprocess(' '.join([
-        'ssh', 
-        # automatically add host into ~/.ssh/known_hosts
-        '-o StrictHostKeyChecking=no',
-        '-i', config.PEM_PATH,
-        f'ubuntu@{ip}', 
-        f''' 'bash -c "{escape_bash_quotes(cmd)}"' '''
-    ]))
-
-'''
-name: spack Installation
-description: This is a sample component to show how to install spack.
-schemaVersion: 1.0
-
-phases:
-  - name: build
-    steps:
-      - name: spackInstallation
-        action: ExecuteBash
-        inputs:
-          commands:
-            - |
-              set -v
-              
-              sudo DEBIAN_FRONTEND=noninteractive apt-get update -y
-              sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nvidia-cuda-toolkit
-              nvcc --version
-              sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip python3-venv
-              mkdir -p ~/apps
-              python3 -m venv ~/apps/venv-app/
-              source ~/apps/venv-app/bin/activate
-              pip3 install requests==2.31.0
-              pip3 install torch==2.0.1
-              pip3 install torchvision==0.15.2
-              pip3 install boto3==1.28.33
-              pip3 install tensorboard==2.14.0
-              pip3 install numpy==1.24.4
-'''
+    cmd_over_ssh('ubuntu', ip, config.PEM_PATH, cmd)
 
 @timer
 def install_deps_into_new_ec2():
-    ssh_spawn_subprocess("echo 'test ssh connection'")
+    ssh_head_spawn_subprocess("echo 'installing os dependencies'")
+    ssh_head_spawn_subprocess('sudo DEBIAN_FRONTEND=noninteractive apt-get update -y')
+    ssh_head_spawn_subprocess('sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nvidia-cuda-toolkit') # cuda compiler ~4min
+    ssh_head_spawn_subprocess('nvcc --version')
+    ssh_head_spawn_subprocess('sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip python3-venv')
+    ssh_head_spawn_subprocess(f'mkdir -p ~/apps') 
+    
+    # TODO: change path name to something less cringe
+    venv_path = '~/apps/venv-app'
 
-    ssh_spawn_subprocess('sudo DEBIAN_FRONTEND=noninteractive apt-get update -y')
-    ssh_spawn_subprocess('sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nvidia-cuda-toolkit') # cuda compiler ~4min
-    ssh_spawn_subprocess('nvcc --version')
-
-    ssh_spawn_subprocess('sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3 python3-pip python3-venv')
-    ssh_spawn_subprocess(f'mkdir -p ~/apps') 
-    ssh_spawn_subprocess(f'python3 -m venv ~/apps/venv-app/') 
-
+    ssh_head_spawn_subprocess(f'python3 -m venv {venv_path}') 
 
     # general python libraries shared across all /apps/{app} for simpler development
-    ssh_spawn_subprocess(' && '.join([
-        f'python3 -m venv ~/apps/venv-app/',
-        'source ~/apps/venv-app/bin/activate',
+    ssh_head_spawn_subprocess(' && '.join([
+        f'python3 -m venv {venv_path}',
+        f'source {venv_path}/bin/activate',
+
         'pip3 install requests==2.31.0',
         'pip3 install torch==2.0.1',
         'pip3 install torchvision==0.15.2',
@@ -138,28 +92,10 @@ def install_deps_into_new_ec2():
         # tensorboard is shared dependency between /bin cluster & /app
         'pip3 install tensorboard==2.14.0',
         'pip3 install numpy==1.24.4',
+        'pip3 install notebook',
+        # install
+        # - jupyter notebook (and open it to internet+SSH tunnel to simulate google colab style)
     ]))
-
-
-    # TODO: add support for pip requirement.txt
-    # spawn_subprocess(
-    # "rsync", "-az", 
-    # f'-e',
-    # f'"ssh -i {config.PEM_PATH}"',
-    # '--delete', # it removes locally removed files
-    # source_dir,
-    # f"ubuntu@{infraState.ip}:~/apps'
-    # )
-
-    """
-    if check_folder_exists('../venv') == False:
-    ssh_spawn_subprocess(' && '.join([
-        # there should not be `source {path}` cmd here
-        '. ../venv-app/bin/activate',
-        # needs to have activated venv (if not) to install pip3 deps
-        'pip3 install -r ./requirements.txt'
-    ]), print=print) # took ~4min
-    """
 
 def get_ec_2_status(instance_id):
     out = spawn_subprocess(
@@ -176,21 +112,12 @@ def get_ec_2_status(instance_id):
 
 def wait_till_ec2_is_ok(instance_id):
     print(f'start checking ec2: {instance_id} status')
-    start_time = time.time()
-    is_init = True
-    while True:
-        elapsed_time = time.time() - start_time
+    def is_loading_ended(prog_print):
         status = get_ec_2_status(instance_id)
-        if status == 'ok':
-            return None
+        prog_print(status)
+        return status == 'ok'
 
-        if is_init:
-            is_init = False
-        else:
-            clear_last_lines(1) # magic fun
-        print(f'elapsed {format_seconds_duration(elapsed_time)}, status: {status}')
-        time.sleep(3)
-
+    monitor_progress(is_loading_ended)
 
 
 def get_ec2_security_group_id(instance_id):
@@ -200,7 +127,72 @@ def get_ec2_security_group_id(instance_id):
     security_group = instance['SecurityGroups'][0]
     return security_group['GroupId']
 
-def create_ec2_pcluster_image(custom_ami_image):
+
+# Build Custom ParallelCluster AMI from Custom Build Component
+# what about to use `aws imagebuilder` instead of EC2 snapshot
+@timer
+def infra__create_custom_dl_ami():
+
+    # instance_id = 'i-043469b2147b1378f'
+    # === create a new EC2 instance ===
+    instance_id = create_empty_ami()
+    wait_till_ec2_is_ok(instance_id)
+
+    # === Enable SSH connection into instance ===
+    try:
+        security_group_id = get_ec2_security_group_id(instance_id)
+        spawn_subprocess(' '.join([
+            'aws ec2 authorize-security-group-ingress',
+            f'--group-id {security_group_id}',  # replace with your security group ID
+            '--protocol tcp --port 22 --cidr 0.0.0.0/0',  # allows SSH traffic from any IP
+        ]))
+    except Exception as e:
+        # skip error, if security-group-ingress is already set
+        print(colorize_red(e))
+
+    install_deps_into_new_ec2()
+
+    out = spawn_subprocess(' '.join([
+        'aws ec2 create-image',
+        f'--instance-id {instance_id}',
+        '--name "my_g4dn_ml_ami_instance_0"',
+        '--description "custom image for cluster slurm machine learning with 1 GPU"'
+    ])) # ~a few minutes
+    out = json.loads(out)
+    ami_image_id = out['ImageId']
+
+    print('ami_image_id: ', ami_image_id)
+
+
+    # ami_image_id = 'ami-0c078394f90de4df5'
+    # print('image_id: ', ami_image_id)
+
+    # TODO: add generic code for loading across whole bin 
+    spawn_subprocess(f'aws ec2 wait image-available --image-ids {ami_image_id}')
+
+    # ===== pcluster magic wrapper with magic errors ====
+    # TODO: use pcluster instead of create-image
+    # pcluster build-image --image-id myFirstCustomImage --image-configuration my-build-config.yaml
+    # # store AMI into EBS:
+    # Now I need to create AMI compatible with pcluster 
+    # create_pcluster_ec2_image(ami_image_id)
+
+    # TODO: terminate running EC2
+
+    print('done!')
+
+# boilerplate setup of ssh+rsync+slurm overhead took ~10sec
+if __name__ == '__main__':
+    infra__create_custom_dl_ami()
+
+
+
+'''
+# may be removed i guess, ec2 bash automating looks good, but not 100% sure about that
+# mmmmm: this function is not needed anymore
+# if I run ubuntu instance with bad AMI, it will throw random error in the cloudFormation stack
+# if i go from pcluster ubuntu, everything works even without pcluster build-image
+def create_pcluster_ec2_image(custom_ami_image):
 
     custom_pcluster_image_id = 'my-first-custom-image-0' # ???
 
@@ -242,70 +234,4 @@ Build:
         subprocess.run('clear')
         print(format_seconds_duration(elapsed_time), out["imageBuildStatus"], out["cloudformationStackStatus"])
         time.sleep(3)
-
-
-# Build Custom ParallelCluster AMI from Custom Build Component
-# what about to use `aws imagebuilder` instead of EC2 snapshot
-def infra__create_custom_dl_ami():
-
-    instance_id = 'i-043469b2147b1378f'
-    # === create a new EC2 instance ===
-    """
-    instance_id = create_empty_ami()
-    wait_till_ec2_is_ok(instance_id)
-
-    # === Enable SSH connection into instance ===
-    try:
-        security_group_id = get_ec2_security_group_id(instance_id)
-        spawn_subprocess(' '.join([
-            'aws ec2 authorize-security-group-ingress',
-            f'--group-id {security_group_id}',  # replace with your security group ID
-            '--protocol tcp --port 22 --cidr 0.0.0.0/0',  # allows SSH traffic from any IP
-        ]))
-    except Exception as e:
-        # non fatal error?...
-        print(colorize_red(e))
-
-    # === prepare AMI ===
-    install_deps_into_new_ec2()
-    """
-
-    """
-    # TODO: use pcluster instead of create-image
-    # pcluster build-image --image-id myFirstCustomImage --image-configuration my-build-config.yaml
-    # # store AMI into EBS:
-    out = spawn_subprocess(' '.join([
-        'aws ec2 create-image',
-        f'--instance-id {instance_id}',
-        '--name "my_g4dn_ml_ami_instance_0"',
-        '--description "custom image for cluster slurm machine learning with 1 GPU"'
-    ])) # ~a few minutes
-    out = json.loads(out)
-    ami_image_id = out['ImageId']
-
-    print('ami_image_id: ', ami_image_id)
-    """
-
-
-    ami_image_id = 'ami-0c078394f90de4df5'
-    print('image_id: ', ami_image_id)
-
-    spawn_subprocess(f'aws ec2 wait image-available --image-ids {ami_image_id}')
-
-    # Now I need to create AMI compatible with pcluster 
-    create_ec2_pcluster_image(ami_image_id)
-
-    """
-    pcluster createami --ami-id ami-0bbe1f8dbd94bdf07 
-    --os <BASE OS AMI>
-    """
-
-
-    print('done!')
-
-# boilerplate setup of ssh+rsync+slurm overhead took ~10sec
-if __name__ == '__main__':
-    infra__create_custom_dl_ami()
-
-
-
+'''

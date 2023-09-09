@@ -7,7 +7,7 @@
     "PEM_PATH": "./secrets/secret_key_pair.pem",
 
     // note now the config supports 1 cluster with 1 running app in the one instance oc user_cluster_config.json
-    "CURRENT_ACTIVE_APP_DIR": "llama_cpp",
+    "CURRENT_ACTIVE_APP_DIR": "jupyter_server",
 
     "AWS_KEY_PAIR_ID": "key_pair_pytorch-ddp-tutor"
 

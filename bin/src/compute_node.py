@@ -1,4 +1,4 @@
-from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
+from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
 
 def get_active_compute_nodes():
     currently_active = ssh_head_spawn_subprocess(' '.join([

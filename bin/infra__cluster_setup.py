@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from src.config import config
-from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
+from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
 from src.timer import timer
 from app__run import install_project_libraries
@@ -16,6 +16,7 @@ def setup_aws_credentials():
 # should the app decide which tool to use for setting up dependencies?
 def install_head_node():
     cmds = [
+        # should be done by shared AMI i guess
         'sudo DEBIAN_FRONTEND=noninteractive apt-get update -y',
         # install venv globally for whole cluster
         'sudo DEBIAN_FRONTEND=noninteractive apt-get install -y python3-venv',
@@ -23,7 +24,6 @@ def install_head_node():
         # install venv
         # f'python3 -m venv /shared/head_node/venv/',
         # 'source /shared/head_node/venv/ && pip3 install tensorboard==2.14.0',
-
         # apache / nginx
     ]
 

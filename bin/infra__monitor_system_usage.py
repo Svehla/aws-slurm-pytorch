@@ -2,7 +2,7 @@
 import time
 import subprocess
 from src.timer import format_seconds_duration
-from src.ssh_head_spawn_subprocess import ssh_compute_spawn_subprocess
+from src.ssh_spawn_subprocess import ssh_compute_spawn_subprocess
 from src.compute_node import get_active_compute_nodes
 
 # ------------------------ GPU section ------------------------

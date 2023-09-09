@@ -24,6 +24,7 @@ def app__attach_to_compute_node():
         f'cd /shared/{config.APP_DIR}',
     ])))
 
+    # TODO: should  use before_connection_config.template.sh?
     ssh_conn_cmd = ' '.join([
         "ssh", 
         '-o StrictHostKeyChecking=no',

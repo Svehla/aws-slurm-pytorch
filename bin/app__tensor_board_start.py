@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from src.config import config
-from src.ssh_head_spawn_subprocess import ssh_head_spawn_subprocess
+from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
 import time
 from src.timer import format_seconds_duration
 from app__tensor_board_browser import app__tensor_board_browser

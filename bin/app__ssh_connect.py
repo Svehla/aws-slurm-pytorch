@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 from src.config import config
-from src.ssh_head_spawn_subprocess import escape_bash_quotes
+from src.ssh_spawn_subprocess import escape_bash_quotes
 from pathlib import Path
 from src.before_connection import sh_before_connection
 from src.array import filter_empty_items
