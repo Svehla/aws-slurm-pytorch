@@ -57,11 +57,21 @@ Scheduling:
   Scheduler: slurm
   SlurmQueues:
   # TODO: add support for spot instance
+
+  - Name: pytorch-queue-0-gpu
+    ComputeResources:
+    - Name: my-0-gpu-node
+      Instances:
+      - InstanceType: t2.medium
+      MinCount: 0
+      MaxCount: 4
+    Networking:
+      SubnetIds:
+      - {{SUBNET_ID}}
+
   - Name: pytorch-queue-1-gpu
     ComputeResources:
-    - Name: my-small-gpu-node
-      # ami-0abcd1234efgh5678 
-      # ImageId: {{IMAGE_ID}}
+    - Name: my-1-gpu-node
       Instances:
       - InstanceType: g4dn.xlarge
       MinCount: 0

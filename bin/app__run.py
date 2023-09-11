@@ -3,7 +3,7 @@ from src.config import config
 from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
 from src.rsync import rsync_to_head_node
 from src.timer import timer
-from src.watch_sbatch_logs import watch_job_logs
+from src.watch_sbatch_logs import watch_sbatch_logs
 import time
 from src.magic_shells import colorize_red
 
@@ -24,7 +24,7 @@ def install_project_libraries():
     ]))
     last_line_of_output = out.splitlines()[-1]
     batch_id = int(last_line_of_output.split()[-1])
-    watch_job_logs(batch_id, start_time=start_time)
+    watch_sbatch_logs(batch_id, start_time=start_time)
     # ssh_head_spawn_subprocess(f"cd {config.HEAD_NODE_APP_SRC}; ./prepare_app_env.py")
 
 # this is good but slow for development so I should hide it behind some cli param i guess
@@ -64,7 +64,7 @@ def app__run():
     signal.signal(signal.SIGINT, signal_handler)
     # ---- ---------------------------------------------------------- ----
 
-    watch_job_logs(batch_id, start_time=start_time)
+    watch_sbatch_logs(batch_id, start_time=start_time)
 
 
 import os

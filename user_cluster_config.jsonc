@@ -1,7 +1,7 @@
 
 {
     // TODO: should this file be in the git repo"
-    "CLUSTER_NAME": "ddp-cluster-0",
+    "CLUSTER_NAME": "ddp-cluster-1",
     // "CLUSTER_NAME": "ddp-cluster-just-ec2",
     "REGION": "eu-central-1",
     "PEM_PATH": "./secrets/secret_key_pair.pem",

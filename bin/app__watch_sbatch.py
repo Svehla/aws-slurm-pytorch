@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-from src.watch_sbatch_logs import watch_job_logs
+from src.watch_sbatch_logs import watch_sbatch_logs
 import time
     
 def watch_sbatch(batch_id):
     start_time = time.time() # should start time be read from the slurm metadata?
-    watch_job_logs(batch_id, start_time=start_time)
+    watch_sbatch_logs(batch_id, start_time=start_time)
 
 def app__watch_sbatch():
     # TODO: should i store/read the latest slurm id?

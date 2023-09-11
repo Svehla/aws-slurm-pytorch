@@ -18,6 +18,7 @@ apps/*/snapshots
 apps/*/temp
 apps/*/venv-app
 apps/**/.ipynb_checkpoints
+apps/**/jupyter_server
 
 # cluster config
 /temp

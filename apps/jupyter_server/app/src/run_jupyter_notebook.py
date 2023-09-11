@@ -16,6 +16,8 @@ stream_command_output(' '.join([
     # 1. shebang does not inherit to new spawn subprocesses
     # 2. source activate venv in sh is done via `.`
     '. ~/apps/venv-app/bin/activate && ',
+    # i want to run jupyter from /shared/{APP_ID} 
+    'cd .. &&',
     'jupyter notebook',
     '--ip 0.0.0.0',
     '--port 9999',

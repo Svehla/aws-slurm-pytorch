@@ -19,9 +19,10 @@ GPUS_PER_NODE_COUNT = 1
 EXPERIMENT_NAME = f"{random.randint(0, 10000)}-test_of_n{NODES_COUNT}-g{GPUS_PER_NODE_COUNT}"
 
 gpu_partition_map = {
+    0: "pytorch-queue-0-gpu",
     1: "pytorch-queue-1-gpu",
     2: "pytorch-queue-2-gpu",
-    4: "pytorch-queue-4-gpu"
+    4: "pytorch-queue-4-gpu",
 }
 
 try:

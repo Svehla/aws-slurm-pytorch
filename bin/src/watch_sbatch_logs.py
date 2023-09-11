@@ -51,7 +51,7 @@ sinfo_desc = """
 - `&`: Power Up - Node currently powering up.
 """
 
-def watch_job_logs(batch_id, start_time = time.time()):
+def watch_sbatch_logs(batch_id, start_time = time.time()):
     log_out = []
     prev_log_out_len = 0
 
@@ -76,14 +76,17 @@ def watch_job_logs(batch_id, start_time = time.time()):
         try:
             b_metadata = get_batch_metadata(batch_id)
 
-            log_out.append(' ___ '.join(b_metadata))
+            if b_metadata == None:
+                # TODO: should I throw error?
+                print("BUG: b_metadata is not defined!")
+                break
+
             b_status = b_metadata['status']
 
             log_out.append('')
             log_out.append(f"time     : {format_seconds_duration(elapsed_time)}")
             log_out.append(f"Batch id : {batch_id}")
-            log_out.append(f"CompNode : {b_metadata['node']}")
-            log_out.append(f"Status   : {b_status} ({expand_slurm_status_code(b_status)})")
+
 
             if b_status == 'CF': # or pending state???? not sure
                 log_out.append('~~~ waiting till all slurm nodes will be ready ~~~')
@@ -91,6 +94,8 @@ def watch_job_logs(batch_id, start_time = time.time()):
                 log_out.append(sinfo_desc)
                 log_out.append(sinfo)   
             else: 
+                log_out.append(f"CompNode : {b_metadata['node']}")
+                log_out.append(f"Status   : {b_status} ({expand_slurm_status_code(b_status)})")
                 out = ''
                 try:
                     log_out.append("================= sbatch =================")

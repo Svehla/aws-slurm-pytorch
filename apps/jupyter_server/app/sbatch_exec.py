@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
 from src.shared import create_prefixed_print, spawn_subprocess
+from ntb_conf import SHOULD_USE_GPU
 
 print = create_prefixed_print('[jupyter->sbatch]')
 
 cmd = ' '.join([
     "sbatch",
-    "--partition=pytorch-queue-1-gpu",
+
+    f"--partition=pytorch-queue-{'1'if SHOULD_USE_GPU else '0'}-gpu",
+
     "--nodes=1",
     "--ntasks=1",
     "--gpus-per-task=1",
