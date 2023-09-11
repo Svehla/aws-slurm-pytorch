@@ -5,6 +5,7 @@ from src.rsync import rsync_to_head_node
 from src.timer import timer
 from src.watch_sbatch_logs import watch_job_logs
 import time
+from src.magic_shells import colorize_red
 
 def upload_ml_model_into_head_node():
     ssh_head_spawn_subprocess(f"mkdir -p {config.HEAD_NODE_APP_SRC}", show_out=False)
@@ -45,7 +46,25 @@ def app__run():
     last_line_of_output = out.splitlines()[-1]
     batch_id = int(last_line_of_output.split()[-1])
 
+    # ---- if user click to CMD+C i want to scancel current slurm PID ----
+    def signal_handler(sig, frame):
+        print()
+        print(f'You pressed {colorize_red("Ctrl+C!")}, wait till slurm job will be cancelled')
+        print()
+        time.sleep(1) # sec
+        ssh_head_spawn_subprocess(f"scancel {batch_id}")
+
+    signal.signal(signal.SIGINT, signal_handler)
+    # ---- ---------------------------------------------------------- ----
+
     watch_job_logs(batch_id, start_time=start_time)
+
+
+import os
+import signal
+import subprocess
+import time
+
 
 # boilerplate setup of ssh+rsync+slurm overhead took ~10sec
 if __name__ == '__main__':

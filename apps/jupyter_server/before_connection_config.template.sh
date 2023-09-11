@@ -1,2 +1,4 @@
 #!/bin/bash
-source "source ~/apps/venv-app/bin/activate"
+
+# source is not supported for some reason...
+. ~/apps/venv-app/bin/activate

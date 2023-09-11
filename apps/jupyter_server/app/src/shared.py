@@ -32,7 +32,42 @@ print = create_prefixed_print('') # if print is not defined, we need to keep flu
 
 
 import io
+import threading
 
+# jupyter notebook stop thread so i need to read logs from different threads
+def stream_command_output(cmd, print=print):
+    print()
+    print(colorize_gray(':~$ ') , colorize_yellow(cmd), sep='')
+
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def read_and_print(stream):
+        while True:
+            char = stream.read(1)
+            if char == '' and process.poll() is not None:
+                break
+            if char != '':
+                print(char, end='')
+
+    # using io.TextIOWrapper for correct handling of special UTF-8 characters
+    stdout = io.TextIOWrapper(process.stdout, encoding='utf-8')
+    stderr = io.TextIOWrapper(process.stderr, encoding='utf-8')
+
+    stdout_thread = threading.Thread(target=read_and_print, args=(stdout,))
+    stderr_thread = threading.Thread(target=read_and_print, args=(stderr,))
+
+    stdout_thread.start()
+    stderr_thread.start()
+
+    stdout_thread.join()
+    stderr_thread.join()
+
+    process.stdout.close()
+    process.stderr.close()
+    return_code = process.wait()
+    return return_code
+
+"""
 # TODO: unify exec/spawn subprocesses somehow
 def stream_command_output(cmd, print=print):
     print()
@@ -69,6 +104,7 @@ def stream_command_output(cmd, print=print):
     process.stderr.close()
     process.wait()
     return stdout_str
+"""
 
 def spawn_subprocess(cmd: str, show_cmd=True, show_out=True, print=print):
     if show_cmd:
@@ -87,6 +123,7 @@ def spawn_subprocess(cmd: str, show_cmd=True, show_out=True, print=print):
     return out
 
 
+# venv debug is only working for source setting, not for shebang settings
 def debug_identify_instance(print=print):
     import os
     if 'VIRTUAL_ENV' in os.environ:

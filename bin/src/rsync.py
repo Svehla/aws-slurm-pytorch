@@ -8,7 +8,11 @@ def rsync_to_head_node(source_dir, TARGET_DIR):
         "rsync", "-az", 
         f'-e',
         f'"ssh -i {config.PEM_PATH}"',
-        '--delete', # it removes locally removed files
+
+        # it removes locally removed files
+        # its good to keep the server clean, but it broke jupyter notebook experience
+        # '--delete', 
+
         source_dir,
         f"{config.HEAD_NODE_USER}@{infraState.ip}:{TARGET_DIR}"
     ]))

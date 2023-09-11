@@ -49,6 +49,7 @@
         "pcluster",
         "pravoai",
         "probs",
+        "randn",
         "rcfile",
         "rdzv",
         "relu",

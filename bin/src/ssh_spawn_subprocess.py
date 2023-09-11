@@ -58,8 +58,10 @@ def ssh_head_spawn_subprocess(cmd, activate_sources=True, show_cmd=True, show_ou
     init_command = ''
     if activate_sources:
         make_slurm_commands_available = 'source /etc/profile'
-        # sh_before_connection
-        init_command = ';'.join(filter_empty_items([make_slurm_commands_available, sh_before_connection])) + ';'
+        init_command = ';'.join(filter_empty_items([
+            make_slurm_commands_available,
+            sh_before_connection
+        ])) + ';'
 
     if infraState.ip == None:
         raise Exception(f"infraState.ip is None, be sure that you have active pcluster")
