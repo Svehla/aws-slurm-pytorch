@@ -28,9 +28,6 @@ def app__attach_to_compute_node():
         # chatGPT magic :pray: god bless open.ai
     ])
 
-    print('------------')
-    print(ssh_conn_cmd)
-    print()
     app__ssh_connect(ssh_conn_cmd)
 
 # boilerplate setup of ssh+rsync+slurm overhead took ~10sec

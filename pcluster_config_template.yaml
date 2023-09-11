@@ -48,6 +48,7 @@ SharedStorage:
 # c5.large => $0.085 (2cpu, 4ram)
 HeadNode:
   # TODO: put cheaper instance here, all compute heavy tasks are made by compute nodes right now
+  # TODO: measure: shared file system dependant on this instance type? is this instance too big/small?
   InstanceType: t2.medium
   Networking:
     SubnetId: {{SUBNET_ID}}

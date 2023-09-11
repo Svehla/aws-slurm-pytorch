@@ -64,7 +64,7 @@ def get_ec2_ip():
 
 def ssh_head_spawn_subprocess(cmd):
     ip = get_ec2_ip()
-    cmd_over_ssh('ubuntu', ip, config.PEM_PATH, cmd)
+    cmd_over_ssh(f'ubuntu@{ip}', config.PEM_PATH, cmd)
 
 @timer
 def install_deps_into_new_ec2():
@@ -133,7 +133,7 @@ def get_ec2_security_group_id(instance_id):
 @timer
 def infra__create_custom_dl_ami():
 
-    # instance_id = 'i-043469b2147b1378f'
+    # instance_id = 'i-0403679dff45574b0'
     # === create a new EC2 instance ===
     instance_id = create_empty_ami()
     wait_till_ec2_is_ok(instance_id)
@@ -148,10 +148,9 @@ def infra__create_custom_dl_ami():
         ]))
     except Exception as e:
         # skip error, if security-group-ingress is already set
-        print(colorize_red(e))
+        print(f'I am IGNORING THIS ERROR: {colorize_red(e)}')
 
     install_deps_into_new_ec2()
-
     out = spawn_subprocess(' '.join([
         'aws ec2 create-image',
         f'--instance-id {instance_id}',
@@ -170,6 +169,18 @@ def infra__create_custom_dl_ami():
     # TODO: add generic code for loading across whole bin 
     spawn_subprocess(f'aws ec2 wait image-available --image-ids {ami_image_id}')
 
+
+    print(f'''
+          
+        USER ACTION NEEDED!!!
+        in the file pcluster_config_template.yaml replace 
+
+        ...
+        Image:
+          CustomAmi: {ami_image_id}
+        ...
+    ''')
+
     # ===== pcluster magic wrapper with magic errors ====
     # TODO: use pcluster instead of create-image
     # pcluster build-image --image-id myFirstCustomImage --image-configuration my-build-config.yaml
@@ -178,6 +189,7 @@ def infra__create_custom_dl_ami():
     # create_pcluster_ec2_image(ami_image_id)
 
     # TODO: terminate running EC2
+    spawn_subprocess(f'aws ec2 terminate-instances --instance-ids {instance_id}')
 
     print('done!')
 

@@ -26,7 +26,7 @@ def input_compute_node():
     node_to_connect = None
 
     if len(active_nodes) == 1:
-        node_to_connect = active_nodes[0]
+        return active_nodes[0]
     else:
         questions = [
             inquirer.List(

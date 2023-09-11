@@ -9,4 +9,6 @@ from src.shared import create_prefixed_print, spawn_subprocess
 print = create_prefixed_print('[llama.cpp->prepare_app_env]') 
 
 # not sure, if pip3 inherit venv from shebang
-spawn_subprocess(f'pip3 install notebook')
+# I think its not installed in the venv!
+# spawn_subprocess(f'pip3 install notebook')
+spawn_subprocess(f'. ~/apps/venv-app/bin/activate && pip3 install notebook')

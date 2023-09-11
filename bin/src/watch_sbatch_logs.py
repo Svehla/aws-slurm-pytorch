@@ -78,7 +78,8 @@ def watch_sbatch_logs(batch_id, start_time = time.time()):
 
             if b_metadata == None:
                 # TODO: should I throw error?
-                print("BUG: b_metadata is not defined!")
+                print("b_metadata is not defined!")
+                # print("BUG: b_metadata is not defined!")
                 break
 
             b_status = b_metadata['status']
