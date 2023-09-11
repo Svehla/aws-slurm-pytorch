@@ -65,6 +65,7 @@
         "SOTA",
         "squeue",
         "srun",
+        "SSHFS",
         "templating",
         "tensorboard",
         "torchvision",

@@ -1,21 +1,12 @@
 #!/usr/bin/env python3
-from src.compute_node import get_active_compute_nodes
+from src.compute_node import input_compute_node
 from app__ssh_connect import app__ssh_connect, escape_bash_quotes
 from src.config import config
 from src.array import filter_empty_items
     
 def app__attach_to_compute_node():
-    active_nodes = get_active_compute_nodes()
-    print('TODO: implement attach_to_compute_node')
-    print(active_nodes)
 
-    node_to_connect = active_nodes[0]
-    print(node_to_connect)
-    print("TODO: select node which you want to connect")
-
-    if not node_to_connect:
-        print("TODO: no node is selected!!!!")
-        return
+    node_to_connect = input_compute_node()
 
     make_slurm_commands_available = 'source /etc/profile'
     commands_to_run_before_user_start_interacting = escape_bash_quotes('; '.join(filter_empty_items([

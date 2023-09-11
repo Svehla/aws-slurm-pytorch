@@ -5,15 +5,20 @@ from src.config import config
 from src.timer import format_seconds_duration
 from src.magic_shells import colorize_gray, clear_last_lines
 
-def get_batch_id_status(batch_id):
+def get_batch_metadata(batch_id):
     output = ssh_head_spawn_subprocess(f'squeue -j {str(batch_id)}', show_cmd=False, show_out=False)
 
     lines = output.strip().split('\n')
 
     if len(lines) > 1:
         columns = lines[1].split()
-        status = columns[4]
-        return status
+
+        keys = [
+            'job_id', 'partition', 'name', 'user',
+            'status', 'time', 'nodes_count', 'node'
+        ]
+        return dict(zip(keys, columns))
+
     else:
         return None
 
@@ -69,11 +74,15 @@ def watch_job_logs(batch_id, start_time = time.time()):
         elapsed_time = time.time() - start_time
         time.sleep(1)
         try:
-            b_status = get_batch_id_status(batch_id)
+            b_metadata = get_batch_metadata(batch_id)
+
+            log_out.append(' ___ '.join(b_metadata))
+            b_status = b_metadata['status']
 
             log_out.append('')
             log_out.append(f"time     : {format_seconds_duration(elapsed_time)}")
             log_out.append(f"Batch id : {batch_id}")
+            log_out.append(f"CompNode : {b_metadata['node']}")
             log_out.append(f"Status   : {b_status} ({expand_slurm_status_code(b_status)})")
 
             if b_status == 'CF': # or pending state???? not sure

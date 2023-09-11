@@ -31,7 +31,7 @@ def install_project_libraries():
 SHOULD_prepare_app_env = False
 # SHOULD_prepare_app_env = True
 
-interrupted = False
+scancel_finished = False
 
 @timer
 def app__run():
@@ -50,17 +50,16 @@ def app__run():
 
     # ---- if user click to CMD+C i want to scancel current slurm PID ----
     def signal_handler(sig, frame):
-        global interrupted
-        if interrupted:
-            print(f'You pressed {colorize_red("Ctrl+C!")} again, killing the process...')
+        global scancel_finished
+        if scancel_finished:
+            print(f'You pressed {colorize_red("Ctrl+C!")} again, killing the process, waited just for scancel. Be sure that everything is killed properly')
             os.kill(os.getpid(), signal.SIGTERM)
         else:
             print(f'You pressed {colorize_red("Ctrl+C!")}, wait till slurm job will be cancelled')
             ssh_head_spawn_subprocess(f"scancel {batch_id}")
-            interrupted = True
-
-    signal.signal(signal.SIGINT, signal_handler)
-
+            scancel_finished = True
+            # is this code OK? not sure if i want to kill it... mmmm
+            # os.kill(os.getpid(), signal.SIGTERM)
 
     signal.signal(signal.SIGINT, signal_handler)
     # ---- ---------------------------------------------------------- ----

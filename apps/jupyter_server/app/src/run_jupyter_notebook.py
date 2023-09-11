@@ -23,9 +23,9 @@ stream_command_output(' '.join([
     # PAY ATTENTION, local development VSCODE BUG
     # if i want to connect from VSCode into the server, token needs to be set
     # it's probably some bug of VSCode plugin
-    '--NotebookApp.token="1"',
+    '--NotebookApp.token="x"',
+    '--NotebookApp.password="x"',
 
-    '--NotebookApp.password=""',
     # extra for vscode settings
     "--NotebookApp.allow_origin='*'",
     "--NotebookApp.ip='0.0.0.0'",

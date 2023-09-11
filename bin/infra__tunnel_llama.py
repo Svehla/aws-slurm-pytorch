@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-from src.compute_node import get_active_compute_nodes
-from src.ssh_spawn_subprocess import ssh_head_spawn_subprocess
+from src.compute_node import input_compute_node
 from src.spawn_subprocess import spawn_subprocess
 import pprint
 from src.magic_shells import colorize_red
@@ -13,17 +12,7 @@ JUPYTER_NOTEBOOK_PORT = 9999
 # TODO: what about open LLAMA into internet via public IP addr?
 def infra__tunnel_ssh(): 
     enable_head_node_ssh_tunneling()
-
-
-    print('TODO: implement selecting of active nodes')
-    active_nodes = get_active_compute_nodes()
-    pprint.pprint(active_nodes)
-    if len(active_nodes) != 1:
-        # TODO: add user picking of instance
-        print(colorize_red('exactly 1 compute node needs to exist to make this script works'))
-        return
-    node_to_connect = active_nodes[0]
-    
+    node_to_connect = input_compute_node()
 
     spawn_subprocess(f'open http://localhost:{LLAMA_SERVER_PORT}')
     # TODO: i do SSH tunnel into head node and then sending traffic from another node
