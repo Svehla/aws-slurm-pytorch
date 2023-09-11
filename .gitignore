@@ -17,6 +17,7 @@ apps/*/tensor_board_logs
 apps/*/snapshots
 apps/*/temp
 apps/*/venv-app
+apps/**/.ipynb_checkpoints
 
 # cluster config
 /temp
@@ -25,3 +26,4 @@ secrets
 .venv
 
 __DELETE__custom_ami
+

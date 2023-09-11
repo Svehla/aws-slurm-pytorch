@@ -8,7 +8,8 @@ print('=== running jupyter notebook server ===')
 
 # testing venv import
 import torch
-print(torch.randn((10, 2  )))
+print(torch.randn((1, 1)))
+
 
 stream_command_output(' '.join([
     # venv struggles:
@@ -18,8 +19,16 @@ stream_command_output(' '.join([
     'jupyter notebook',
     '--ip 0.0.0.0',
     '--port 9999',
-    '--NotebookApp.token=""',
-    '--NotebookApp.password=""'
+
+    # PAY ATTENTION, local development VSCODE BUG
+    # if i want to connect from VSCode into the server, token needs to be set
+    # it's probably some bug of VSCode plugin
+    '--NotebookApp.token="1"',
+
+    '--NotebookApp.password=""',
+    # extra for vscode settings
+    "--NotebookApp.allow_origin='*'",
+    "--NotebookApp.ip='0.0.0.0'",
 ]), print=print)
 
 print("THIS SHOULD NEVER BE SHOWN!!!!!")

@@ -31,6 +31,8 @@ def install_project_libraries():
 SHOULD_prepare_app_env = False
 # SHOULD_prepare_app_env = True
 
+interrupted = False
+
 @timer
 def app__run():
     start_time = time.time()
@@ -48,11 +50,17 @@ def app__run():
 
     # ---- if user click to CMD+C i want to scancel current slurm PID ----
     def signal_handler(sig, frame):
-        print()
-        print(f'You pressed {colorize_red("Ctrl+C!")}, wait till slurm job will be cancelled')
-        print()
-        time.sleep(1) # sec
-        ssh_head_spawn_subprocess(f"scancel {batch_id}")
+        global interrupted
+        if interrupted:
+            print(f'You pressed {colorize_red("Ctrl+C!")} again, killing the process...')
+            os.kill(os.getpid(), signal.SIGTERM)
+        else:
+            print(f'You pressed {colorize_red("Ctrl+C!")}, wait till slurm job will be cancelled')
+            ssh_head_spawn_subprocess(f"scancel {batch_id}")
+            interrupted = True
+
+    signal.signal(signal.SIGINT, signal_handler)
+
 
     signal.signal(signal.SIGINT, signal_handler)
     # ---- ---------------------------------------------------------- ----
